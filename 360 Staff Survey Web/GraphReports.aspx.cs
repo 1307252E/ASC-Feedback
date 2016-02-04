@@ -173,9 +173,13 @@ namespace _360_Staff_Survey_Web
                                 graphwidth.Add(staffname);
 
                                 Chart1.Series[0].Points.AddXY(staffname, avgresult);
+                                Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart1.Visible = true;
 
                                 Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart2.Visible = true;
                             }
                             dr2.Close();
@@ -254,9 +258,13 @@ namespace _360_Staff_Survey_Web
                                     graphwidth.Add(staffname);
 
                                     Chart1.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.Visible = true;
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
                                 }
                                 dr2.Close();
@@ -332,7 +340,7 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT AVG(StaffAppraisal.AppraisalResult) AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name";
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name";
                                 comm2.Parameters.AddWithValue("@name", staffname);
 
                                 SqlDataReader dr2 = comm2.ExecuteReader();
@@ -342,9 +350,13 @@ namespace _360_Staff_Survey_Web
 
                                     graphwidth.Add(staffname);
                                     Chart1.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.Visible = true;
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
                                 }
                                 dr2.Close();
@@ -421,7 +433,7 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT AVG(StaffAppraisal.AppraisalResult) AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name";
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name";
 
                                 comm2.Parameters.AddWithValue("@qid", qid);
                                 comm2.Parameters.AddWithValue("@name", staffname);
@@ -434,9 +446,13 @@ namespace _360_Staff_Survey_Web
                                     graphwidth.Add(staffname);
 
                                     Chart1.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.Visible = true;
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
                                 }
                                 dr2.Close();
@@ -488,7 +504,7 @@ namespace _360_Staff_Survey_Web
                 for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
                 {
                     // Chart1.Series[i].Points[k].Label = "A: " + "#VALY\n" + " S: " + Convert.ToDouble(listofSD[k]).ToString("F") + "\n";
-                    Chart1.Series[i].Points[k].Label = "A: " + "#VALY" + "\nS: " + "\nM: ";
+                    Chart1.Series[i].Points[k].Label = "A: #VALY";
                 }
             }
             //Label3.Visible = true;

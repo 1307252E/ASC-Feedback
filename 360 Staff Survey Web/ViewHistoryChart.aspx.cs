@@ -17,7 +17,7 @@ namespace _360_Staff_Survey_Web
 {
     public partial class ViewHistoryChart : System.Web.UI.Page
     {
-        string tmpChartName = "test2.jpg";
+        
         public static string lbl;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -813,7 +813,7 @@ namespace _360_Staff_Survey_Web
                     Chart1.ChartAreas[0].AxisY.Title = "Average grade";
                     Chart1.Legends[0].Enabled = true;
                     Chart1.Legends[0].BackColor = System.Drawing.Color.Transparent;
-                    Chart1.Width = 1000;
+                    Chart1.Width = 1300;
                     Chart1.Height = 600;
 
                     ArrayList listOfStDev = new ArrayList();
@@ -845,8 +845,7 @@ namespace _360_Staff_Survey_Web
                             Chart1.Series[i].Points[k].Label = "A: " + "#VALY\n" + "S: " + Convert.ToDouble(listOfSDPerSeries[i]).ToString("F") + "\nM: " + Convert.ToDouble(listOfMedPerSeries[i]).ToString("0.0");
                         }
                     }
-                    string imgPath = HttpContext.Current.Request.PhysicalApplicationPath + tmpChartName;
-                    Chart1.SaveImage(imgPath);
+                    
 
                     MultiView1.ActiveViewIndex = 0;
                 }
@@ -954,7 +953,7 @@ namespace _360_Staff_Survey_Web
                     Chart1.Legends.Add("Legend");
                     Chart1.Legends[0].Enabled = true;
                     Chart1.Legends[0].BackColor = System.Drawing.Color.Transparent;
-                    Chart1.Width = 1000;
+                    Chart1.Width = 1300;
                     Chart1.Height = 600;
                     Chart1.Series[0].ToolTip = "populateChartSectionViaFunction";
 
@@ -1246,12 +1245,17 @@ namespace _360_Staff_Survey_Web
         {
             Response.Clear();
             Response.Buffer = true;
-            Response.AddHeader("content-disposition", "attachment;filename=ChartExport.xls");
+            Response.AddHeader("content-disposition", "attachment;filename=ViewHistoryChart.xls");
             Response.ContentType = "application/vnd.ms-excel";
             Response.Charset = "";
             StringWriter sw = new StringWriter();
             HtmlTextWriter hw = new HtmlTextWriter(sw);
             Chart1.RenderControl(hw);
+
+            string tmpChartName = "ChartImage.jpg";
+            string imgPath = HttpContext.Current.Request.PhysicalApplicationPath + tmpChartName;
+            Chart1.SaveImage(imgPath);
+
             string src = tmpChartName;
             string img = string.Format("<img src = '{0}{1}' />", HttpContext.Current.Request.PhysicalApplicationPath, src);
 
