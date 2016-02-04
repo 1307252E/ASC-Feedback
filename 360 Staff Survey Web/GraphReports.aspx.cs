@@ -114,7 +114,7 @@ namespace _360_Staff_Survey_Web
                 {
                     DateTime toshortdate = ((DateTime)listofdates[index]);
                     string monthname = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(toshortdate.Month);
-                    shortdate.Add(monthname.Substring(0, 3) + "/" + toshortdate.Year.ToString().Substring(2, 2));
+                    shortdate.Add(toshortdate.Year.ToString() + "-" + (toshortdate.Month.ToString().Length == 1 ? "0" + toshortdate.Month.ToString() : toshortdate.Month.ToString()));
                     index++;
                 }
                 shortdate.Insert(0, "<----Please select one---->");
@@ -244,9 +244,9 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '"+enddate+"%'";
                                 comm2.Parameters.AddWithValue("@name", staffname);
-                                comm2.Parameters.AddWithValue("@enddate", enddate);
+                                //comm2.Parameters.AddWithValue("@enddate", enddate);
                                 SqlDataReader dr2 = comm2.ExecuteReader();
                                 while (dr2.Read())
                                 {
