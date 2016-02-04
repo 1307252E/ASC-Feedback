@@ -1,0 +1,118 @@
+﻿/* DEFAULTS
+----------------------------------------------------------*/
+
+body
+{
+    background-image: url(../Image/bg1.jpg);
+}
+
+legend
+{
+    color: Blue;
+    font-family: Arial;
+}
+
+.ajax__calendar_header
+{
+    color: Blue;
+}
+
+.ajax__calendar_footer
+{
+    background-color: #99FF99;
+    color: Blue;
+}
+
+.ModalPopupBG
+{
+    background-color: #99FF99;
+    filter: alpha(opacity=50);
+    opacity: 0.7;
+}
+
+.standardButtons
+{
+    height: 25px;
+    width: 65px;
+    font-family: Arial;
+    margin-bottom: 0px;
+}
+
+.label
+{
+    font-family: Arial;
+    font-size: medium;
+    font-weight: normal;
+}
+
+.otherstandard
+{
+    font-family: Arial;
+    font-size: medium;
+}
+
+.otherstandardDropdown
+{
+    font-family: Arial;
+    font-size: medium;
+    width: 210px;
+}
+
+h1
+{
+    /*text-align: center;*/
+    font-family: Arial;
+    font-size: large;
+    font-weight: bold;
+}
+
+.csvwordpdficon
+{
+    height: 38px;
+    width: 40px;
+}
+
+.saveicon
+{
+    height: 28px;
+    width: 30px;
+}
+
+.defaultPanel
+{
+    width: 550px;
+}
+
+.hereLink
+{
+    font-family: Arial;
+    font-size: medium;
+    color: Blue;
+}
+
+.remarkTbx
+{
+}
+
+.textboxesquestions
+{
+}
+
+.buttonquestions
+{
+    font-family: Arial;
+    width: 120px;
+    height: 25px;
+}
+
+.standardManage
+{
+    font-family: Arial;
+    width: 180px;
+    font-size: medium;
+}
+
+.checkbox
+{
+    padding-left: 15px;
+}

@@ -1,0 +1,327 @@
+﻿
+body
+{
+  background: url(../Image/ASCBackgroundGreen.png) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; 
+}
+
+legend
+{
+    color: Blue;
+    font-family: Arial;
+}
+
+.sidebysidepanel
+{
+    float:left;
+}
+
+.ajax__calendar_header
+{
+    color: Blue;
+}
+
+.ajax__calendar_footer
+{
+    background-color: #99FF99;
+    color: Blue;
+}
+
+.ModalPopupBG
+{
+    background-color: #99FF99;
+    filter: alpha(opacity=50);
+    opacity: 0.7;
+}
+
+.standardButtons
+{
+    height: 25px;
+    width: 65px;
+    font-family: Arial;
+    margin-bottom: 0px;
+}
+
+.label
+{
+    font-family: Arial;
+    font-size: medium;
+    font-weight: normal;
+}
+
+.otherstandard
+{
+    font-family: Arial;
+    font-size: medium;
+    margin-top: 0px;
+}
+
+.otherstandardDropdown
+{
+    font-family: Arial;
+    font-size: medium;
+    width: 210px;
+}
+
+h1
+{
+    font-family: Arial;
+    font-size: large;
+    font-weight: bold;
+}
+
+.saveicon
+{
+    height: 28px;
+    width: 30px;
+}
+
+.defaultPanel
+{
+    width: 550px;
+}
+
+.hereLink
+{
+    font-family: Arial;
+    font-size: medium;
+    color: Blue;
+}
+
+.remarkTbx
+{
+}
+
+.textboxesquestions
+{
+}
+
+.buttonquestions
+{
+    font-family: Arial;
+    width: 120px;
+    height: 25px;
+}
+
+.standardManage
+{
+    font-family: Arial;
+    font-size: medium;
+}
+
+.checkbox
+{
+    padding-left: 15px;
+}
+
+
+
+
+
+
+
+
+
+
+
+#ddmenu
+{
+    display:block;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-align:center; 
+    letter-spacing:normal;
+}
+
+#ddmenu ul
+{ 
+    margin:0 auto;
+    text-align:center;
+    width:100%;
+    font-size:0;
+    background:#58FAAC;
+    display:inline-block;
+    list-style:none;
+    position:relative;
+    z-index:999999990; 
+    border-radius:2px;
+padding-top:2px;
+    top: -21px;
+    left: -3px;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+}
+
+#ddmenu li
+{
+    margin:0;
+    padding:0;
+    font-size:14px;
+    display:inline-block;   
+    *display:inline;
+    zoom:1; 
+    position:relative;
+    color:#eeeeee;
+    line-height:44px;
+    transition:background-color 0.2s;
+    outline:none;
+}
+
+#ddmenu li.full-width {
+    position:static;
+}
+
+#ddmenu li.over
+{
+    color:#333333;
+background-color:#e4e7ea;
+}
+
+#ddmenu li.over.no-sub {
+    color:#fff;
+background-color:#366078;
+border-radius:0;
+}
+
+#ddmenu .top-heading
+{
+    font-weight:normal;
+    white-space:nowrap;
+    margin:0 22px;
+    color:inherit;
+    text-decoration:none;
+    display:inline-block; 
+    outline:0;
+    cursor:pointer;
+}
+
+
+#ddmenu li a, #ddmenu li a:link, #ddmenu li a:hover
+{
+    color:inherit;
+}
+#ddmenu li a:hover
+{
+    text-decoration:underline;
+}
+
+#ddmenu li a:focus
+{
+    outline:1px dotted #09F;
+}
+
+#ddmenu i.caret
+{
+    color:inherit;
+    left:-18px;
+    width: 0;
+    height: 0;
+    overflow:hidden;
+    vertical-align:middle;
+    margin-bottom:2px;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+    display: inline-block;
+    position:relative;
+}  
+        
+
+
+#ddmenu .dropdown
+{
+    width:auto;    
+    left:0px;
+    color:#333333;   
+    padding:0;margin:0;display:none;position:absolute;
+    top:100%;    
+    border:1px solid #bbb;border-top:none;
+border-radius:0 0 3px 3px;
+box-shadow: 0px 6px 6px rgba(0,0,0,0.175);
+}
+
+#ddmenu li.full-width .dropdown {
+    width:100%;
+    padding:0;
+    margin:0;
+}
+
+#ddmenu .offset300 {
+    left:-300px;right:auto;
+}
+
+#ddmenu .right-aligned {
+    left:auto;
+    right:0px;
+}
+
+#ddmenu li.over .dropdown
+{
+    display:block;
+}
+
+#ddmenu .dd-inner {
+    text-align:center;
+    padding:20px;
+    margin:0px;
+    background-color:#e4e7ea;
+    white-space:nowrap;
+    font-size:13px;
+    line-height:1.35;
+}
+
+
+#ddmenu .dropdown a
+{  
+    display:block;
+    color:#444;
+    line-height:22px;
+    text-decoration:none;
+    padding:0;
+}
+
+#ddmenu .dropdown a:hover, #ddmenu .dropdown a:focus
+{
+    text-decoration:underline;
+    color:#0099FF;
+}
+
+
+#ddmenu div.column
+{
+    text-align:left;
+    vertical-align:top;
+    display:inline-block;
+    *display:inline;*zoom:1;
+    white-space:normal;
+    width:auto;min-width:170px;
+max-width:300px;
+padding:0 30px;
+border-right:1px solid #333;
+}
+
+#ddmenu div.dd-inner div:last-child
+{
+    border-right:none;
+}
+
+#ddmenu div.column h3 {
+  font-weight: 500;
+  line-height: 1.1;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  font-size: 24px;
+}
+
+#ddmenu li {border-radius:3px 3px 0 0;}
+
+#ddmenu div.column h3 {
+text-transform:uppercase;
+border-bottom:1px solid #333;
+}
+
+#ddmenuLink {display:none;}
+

@@ -1,0 +1,333 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="_360_Staff_Survey_Web.SiteMaster" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head id="Head1" runat="server">
+    <title>Online 360° Leadership System</title>
+    <link href="Styles/site.css" rel="stylesheet" type="text/css" />
+
+
+    <script type="text/javascript">
+
+
+        function FillListValues(CONTROL) {
+            var arrNewValues;
+            var intNewPos;
+            var strTemp = GetSelectValues(CONTROL);
+            arrNewValues = strTemp.split(",");
+            for (var i = 0; i < arrNewValues.length - 1; i++) {
+                if (arrNewValues[i] == 1) {
+                    intNewPos = i;
+                }
+            }
+            for (var i = 0; i < arrOldValues.length - 1; i++) {
+                if (arrOldValues[i] == 1 && i != intNewPos) {
+                    CONTROL.options[i].selected = true;
+                }
+                else if (arrOldValues[i] == 0 && i != intNewPos) {
+                    CONTROL.options[i].selected = false;
+                }
+
+                if (arrOldValues[intNewPos] == 1) {
+                    CONTROL.options[intNewPos].selected = false;
+                }
+                else {
+                    CONTROL.options[intNewPos].selected = true;
+                }
+            }
+        }
+
+        function GetCurrentListValues(CONTROL) {
+            var strValues = "";
+            strValues = GetSelectValues(CONTROL);
+            arrOldValues = strValues.split(",")
+        }
+
+        function GetSelectValues(CONTROL) {
+            var strTemp = "";
+            for (var i = 0; i < CONTROL.length; i++) {
+                if (CONTROL.options[i].selected == true) {
+                    strTemp += "1,";
+                }
+                else {
+                    strTemp += "0,";
+                }
+            }
+            return strTemp;
+        }
+
+        function DisableEnterKey() {
+            if (event.keyCode == 13) {
+                return false;
+            }
+            else if (event.keyCode == 116) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        document.attachEvent("onkeydown", my_onkeydown_handler);
+        function my_onkeydown_handler() {
+            switch (event.keyCode) {
+
+                case 116: // 'F5' 
+                    event.returnValue = false;
+                    event.keyCode = 0;
+                    window.status = "F5 disabled";
+                    break;
+            }
+        }
+
+        function limitText(limitField, limitNum) {
+            if (limitField.value.length > limitNum) {
+                limitField.value = limitField.value.substring(0, limitNum);
+                alert("You has exceeded the maximum character limit.");
+            }
+        }
+        function check(e) {
+            var keynum
+            var keychar
+            var numcheck
+            // For Internet Explorer   
+            if (window.event) {
+                keynum = e.keyCode
+            }
+            // For Netscape/Firefox/Opera   
+            else if (e.which) {
+                keynum = e.which
+            }
+            keychar = String.fromCharCode(keynum)
+            //List of special characters you want to restrict   
+            if (keychar == "`" || keychar == "~" || keychar == "#" || keychar == "$" || keychar == "]"
+             || keychar == "%" || keychar == "^" || keychar == "*" || keychar == "["
+             || keychar == "{" || keychar == "}" || keychar == ";"
+             || keychar == "+" || keychar == "=" || keychar == "<" || keychar == ">"
+             || keychar == "|" || keychar == "-") {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        function DisableControlKey(e) {
+            // Message to display
+            var message = "Right click option disabled.";
+            // Condition to check mouse right click
+            if (e.button == 2) {
+                alert(message);
+                return false;
+            }
+        }
+
+    </script>
+    <style type="text/css">
+        .style1
+        {
+            width: 100%;
+        }
+    </style>
+    <style type="text/css">
+        @import "TimerJs/jquery.countdown.css";
+        
+        #defaultCountdown
+        {
+            width: 100px;
+            text-align: center;
+            height: 45px;
+        }
+        .style1
+        {
+            width: 100%;
+        }
+        
+        .countdown_amount
+        {
+            font-size: 140%;
+        }
+        .countdown
+        {
+            float: left;
+            width: 98px;
+            height: 51px;
+        }
+        #curvyCorners
+        {
+            border: none;
+            background-color: transparent;
+        }
+        
+        #curvyWrapper
+        {
+            float: left;
+            width: 240px;
+            border: 1px solid #CCC;
+            background-color: #EEE;
+        }
+        
+        .highlight
+        {
+            color: red;
+        }
+        .auto-style2 {
+            width: 103%;
+        }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script src="TimerJs/jquery.countdown.js" type="text/javascript"></script>
+    <script src="TimerJs/jquery.curvycorners.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        $(function load() {
+            var mySite = $('#HiddenField1').val();
+
+            $('#defaultCountdown').countdown({ until: 0, expiryUrl: 'http://ascapps.tp.edu.sg/360Leadership/LoginPage.aspx?', description: 'Timer', onTick: highlightLast5, compact: true });  /* for redirecting*/
+            function highlightLast5(periods) {
+                if ($.countdown.periodsToSeconds(periods) == 600) {
+                    $(this).addClass('highlight');
+                    alert("You have left 10 mins to either save or complete your appraisal");
+                }
+
+                if (mySite > 600) { }
+                else {
+                    $(this).addClass('highlight');
+                }
+            }
+            $('#defaultCountdown').countdown('change', { until: +mySite }); /*set timer*/
+        });
+    </script>
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body 
+        id="b1" onkeydown="return DisableEnterKey()" runat="server">
+    <form runat="server">
+    <asp:HiddenField ID="HiddenField1" runat="server" />
+    <asp:Label ID="hiddenTime" runat="server" Visible="False"></asp:Label>
+        <span style="font-size: 13pt; font-family: Arial; font-weight: normal;
+                            color: gray;"><div align="center">
+    <div runat="server" id="defaultCountdown" class="countdown">
+                               
+                                
+                               
+                            </div>
+                            
+            </div>
+            </span>
+        <div align="center">
+        <asp:Image ID="Image1" runat="server" ImageUrl="~/Image/tplogo.png" />
+            <table>
+                &nbsp
+            </table>
+        <b style="font-family: Arial; font-weight: bold; font-size: medium;">
+        <br />
+        SCHOOL OF APPLIED
+            SCIENCE</b></div>
+    <br />
+        <div align="center">
+            <b style="font-family: Arial; font-weight: bold; font-size: medium">Online 360<span
+            class="st">°</span> Leadership System</b></div>
+    <br />
+    <div align="right">
+        &nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       
+        <asp:Label ID="WelcomeLbl" runat="server" Text="Welcome: " CssClass="label"></asp:Label>
+        <asp:Label ID="staffName" runat="server" ForeColor="Black" CssClass="label"></asp:Label>
+        <br />
+        <br />
+    </div>
+    <table width="100%">
+        <tr>
+            <td class="auto-style2">
+                <h3 style="border-bottom-style: groove; border-bottom-width: thin; padding-bottom: 10px;
+                    width: 100%;">
+                    &nbsp;
+
+                    
+</div>
+        <link rel="stylesheet" type="text/css" href="Styles/menu3.css">
+                &nbsp;<div class="menu3">
+    <asp:Label ID="firstbracket1" runat="server" Text="[" Font-Bold="False"></asp:Label>
+                    <asp:LinkButton ID="HomeLinkBtn" runat="server" CssClass="label" OnClick="HomeLinkBtn_Click"
+                        Font-Bold="False" CausesValidation="False" Font-Names="Arial" Font-Size="Large" ForeColor="Black">Home</asp:LinkButton>
+                    <asp:Label ID="secondbracket1" runat="server" Text="]" Font-Bold="False"></asp:Label>
+                    <asp:Label ID="firstbracket3" runat="server" Text="[" Font-Bold="False"></asp:Label>
+                    <asp:LinkButton ID="ChangePasswLink" runat="server" CssClass="label" Font-Bold="False"
+                        OnClick="ChangePasswLink_Click" CausesValidation="False" Font-Names="Arial" Font-Size="Large" ForeColor="Black">Change Password</asp:LinkButton>
+                    <asp:Label ID="secondbracket3" runat="server" Text="]" Font-Bold="False"></asp:Label>
+                    <asp:Label ID="firstbracket2" runat="server" Text="[" Font-Bold="False"></asp:Label>
+                    <asp:LinkButton ID="LogoutLinkBtn" runat="server" CssClass="label" Font-Bold="False"
+                        OnClick="LogoutLinkBtn_Click" OnClientClick="return confirm('The webpage you are viewing is trying to logout. Do you want to continue?');"
+                        CausesValidation="False" Font-Names="Arial" Font-Size="Large" ForeColor="Black">Logout</asp:LinkButton>
+                    <asp:Label ID="secondbracket2" runat="server" Text="]" Font-Bold="False"></asp:Label>
+
+
+                    
+            </td>
+            <td>
+                <table width="100%">
+                    
+                    <tr>
+                        <td class="style1">
+                            <br />
+            <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server">
+            </asp:ToolkitScriptManager>
+                        </td>
+                        <td align="right">
+                            <br />
+                               
+                            <asp:Timer ID="Timer1" runat="server" Interval="1000">
+                            </asp:Timer>
+                               
+                            <div id="datetimecountdown" class="countdown">
+                            <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                                    <ContentTemplate>
+                                        
+                                        <asp:Label ID="datetime" runat="server" Font-Bold="True" Font-Names="Arial" Font-Size="Large"></asp:Label>
+                                        &nbsp;&nbsp;&nbsp;
+                                        <asp:Label ID="Label1" runat="server" Font-Bold="True" Font-Names="Arial" Text="Timer" Font-Size="Large"></asp:Label>
+                                        &nbsp; &nbsp;&nbsp;&nbsp;
+                                    </ContentTemplate>
+                                    <Triggers>
+                                        <asp:AsyncPostBackTrigger ControlID="Timer1" />
+                                    </Triggers>
+                                </asp:UpdatePanel>
+                                </div>
+                               
+                        </td>
+                    </tr>
+                    
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
+    <div class="footer">
+        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+        </asp:ContentPlaceHolder>
+        <div style="border-top-style: groove; border-top-width: thin; padding-top: 5px" align="center">
+            <span style="font-size: 13pt; font-family: Arial; font-weight: normal; color: gray; font-size:small">
+                <em>Copyright @<asp:Label ID="copyRightDate" CssClass="copyRightDate" runat="server" Font-Bold="True" Font-Names="AR JULIAN" Font-Size="Small"></asp:Label>
+                    Temasek Polytechnic Singapore</em></span> <span style="font-size: 13pt; font-family: Arial;
+                        font-weight: normal; color: gray;"><em>
+                            <br />
+                        </em></span><span style="font-size: 13pt; font-family: Arial; font-weight: normal;
+                            color: gray; font-size:small"><em>Content provided by School of Applied Science</em><div align="center">
+                <span style="font-size: 13pt; font-family: Arial; font-weight: normal;
+                            color: gray;"><div align="center">
+                    <span style="font-size: 13pt; font-family: Arial; font-weight: normal;
+                            color: gray;"><div align="center">
+                            
+            </div>
+            </span>
+                            
+            </div>
+            </span>
+                            
+            </div>
+            </span></div>
+    </div>
+    </form>
+</body>
+</html>
