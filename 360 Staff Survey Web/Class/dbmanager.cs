@@ -1267,7 +1267,7 @@ namespace _360_Staff_Survey_Web.Class
             }
             return result;
         }
-        public static double GetIndividualStdDev(string name, string section, int questionID, DateTime date)
+        public static double GetIndividualStdDev(string name, int questionID, DateTime date)
         {
             SqlConnection myconn = null;
             double result = 0.0;
@@ -1280,14 +1280,13 @@ namespace _360_Staff_Survey_Web.Class
                 comm.Connection = myconn;
                 if (questionID == 0)
                 {
-                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDate=@date ";
+                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and stfp.SystemEndDate=@date ";
                 }
                 else
                 {
-                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.AppraisalQuestionID=@quesid and stfp.SystemEndDate=@date ";
+                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and stfp.AppraisalQuestionID=@quesid and stfp.SystemEndDate=@date ";
                 }
                 comm.Parameters.AddWithValue("@name", name);
-                comm.Parameters.AddWithValue("@section", section);
                 comm.Parameters.AddWithValue("@qID", questionID);
                 comm.Parameters.AddWithValue("@date", date);
                 

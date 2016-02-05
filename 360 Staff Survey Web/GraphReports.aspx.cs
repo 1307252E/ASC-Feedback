@@ -162,10 +162,9 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@qid", qid);
                             comm2.Parameters.AddWithValue("@name", staffname);
-                            comm2.Parameters.AddWithValue("@enddate", enddate);
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())
                             {
@@ -176,6 +175,8 @@ namespace _360_Staff_Survey_Web
                                 Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart1.Visible = true;
+
+
 
                                 Chart2.Series[0].Points.AddXY(staffname, avgresult);
                                 Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
@@ -248,9 +249,8 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '"+enddate+"%'";
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                                 comm2.Parameters.AddWithValue("@name", staffname);
-                                //comm2.Parameters.AddWithValue("@enddate", enddate);
                                 SqlDataReader dr2 = comm2.ExecuteReader();
                                 while (dr2.Read())
                                 {
@@ -340,7 +340,7 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name";
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                                 comm2.Parameters.AddWithValue("@name", staffname);
 
                                 SqlDataReader dr2 = comm2.ExecuteReader();
@@ -353,6 +353,29 @@ namespace _360_Staff_Survey_Web
                                     Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.Visible = true;
+
+                                    int graphwidthx = graphwidth.Count * 150;
+
+                                    Chart1.Width = graphwidthx;
+                                    Chart1.Height = 600;
+                                    Chart1.ChartAreas[0].AxisY.Title = "Average Score Recorded";
+                                    Chart1.ChartAreas[0].AxisX.Title = "Name of Staffs";
+                                    Chart1.ChartAreas[0].AxisX.Interval = 1;
+
+                                    ArrayList listofSD = new ArrayList();
+                                    ArrayList listofdates = dbmanager.GetListofDatesViaSection(section);
+                                    int quesid = dbmanager.GetQuestionIDFromQuestion(question);
+
+                                    foreach (DateTime date in listofdates)
+                                    {
+                                        listofSD.Add(dbmanager.GetIndividualStdDev(staffname, quesid, date));
+                                    }
+
+                                    for (int k = 0; k < Chart1.Series[0].Points.Count; k++)
+                                    {
+                                        // Chart1.Series[0].Points[k].Label = "A: #VALY" + "\nS: " + Convert.ToDouble(listofSD[k]).ToString("F");
+                                        Chart1.Series[0].Points[k].Label = "A: #VALY";
+                                    }
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
                                     Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
@@ -433,8 +456,7 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name";
-
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                                 comm2.Parameters.AddWithValue("@qid", qid);
                                 comm2.Parameters.AddWithValue("@name", staffname);
 
@@ -480,7 +502,7 @@ namespace _360_Staff_Survey_Web
             }
             // chart.Series[0].Points.DataBindXY(xAxis, yAxis);
             // where xAxis is List<String> and yAxis is List<Double>
-            int graphwidthx = graphwidth.Count * 150;
+            /*int graphwidthx = graphwidth.Count * 150;
 
             Chart1.Width = graphwidthx;
             Chart1.Height = 600;
@@ -516,7 +538,7 @@ namespace _360_Staff_Survey_Web
             Chart2.ChartAreas[0].AxisX.Interval = 1;
             Chart2.Series[0].Label = "#VALY" + "\nS: " + "\nM: ";
             //Label4.Visible = true;
-
+            */
             if (CheckBox1.Checked)
             {
                 if (CheckBox2.Checked)
@@ -598,10 +620,9 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@qid", qid);
                             comm2.Parameters.AddWithValue("@name", staffname);
-                            comm2.Parameters.AddWithValue("@enddate", enddate);
 
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())
@@ -659,7 +680,7 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@name", staffname);
 
                             SqlDataReader dr2 = comm2.ExecuteReader();
@@ -719,9 +740,8 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@name", staffname);
-                            comm2.Parameters.AddWithValue("@enddate", enddate);
 
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())
@@ -780,10 +800,9 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@qid", qid);
                             comm2.Parameters.AddWithValue("@name", staffname);
-                            comm2.Parameters.AddWithValue("@enddate", enddate);
 
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())
