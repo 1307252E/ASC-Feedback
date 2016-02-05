@@ -830,14 +830,11 @@ namespace _360_Staff_Survey_Web
                             listOfSDForFunction.Add(dbmanager.GetStdDevAppraisalForFunction(section, listOfFunctions[x], date, questionID));
                             listOfMedForFunction.Add(GetMedianFunctionViaSectionCount(section, listOfFunctions[x], date, questionID));
                         }
-
                         listOfStDev.Add(String.Join(",",listOfSDForFunction.ToArray()));
                         listOfMed.Add(String.Join(",",listOfMedForFunction.ToArray()));
-                    }
-                    
+                    }                    
                     for (int i = 0; i < Chart1.Series.Count; i++)
                     {
-
                         for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
                         {
                             string[] listOfSDPerSeries = listOfStDev[k].ToString().Split(',');
@@ -845,8 +842,6 @@ namespace _360_Staff_Survey_Web
                             Chart1.Series[i].Points[k].Label = "A: " + "#VALY\n" + "S: " + Convert.ToDouble(listOfSDPerSeries[i]).ToString("F") + "\nM: " + Convert.ToDouble(listOfMedPerSeries[i]).ToString("0.0");
                         }
                     }
-                    
-
                     MultiView1.ActiveViewIndex = 0;
                 }
                 else

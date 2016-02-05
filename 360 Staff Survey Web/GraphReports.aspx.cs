@@ -37,7 +37,6 @@ namespace _360_Staff_Survey_Web
             ArrayList questionall = new ArrayList();
             ArrayList shortdate = new ArrayList();
             ArrayList listofdates = dbmanager.GetAllDates();
-            Question quest = null;
             int index = 0;
             try
             {
@@ -136,7 +135,6 @@ namespace _360_Staff_Survey_Web
                 int qid = dbmanager.GetQuestionIDFromQuestion(question);
 
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -154,7 +152,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -175,8 +172,6 @@ namespace _360_Staff_Survey_Web
                                 Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart1.Visible = true;
-
-
 
                                 Chart2.Series[0].Points.AddXY(staffname, avgresult);
                                 Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
@@ -206,7 +201,6 @@ namespace _360_Staff_Survey_Web
             else if (question == "All Questions" && section == "All Sections" && enddate != "<----Please select one---->")
             {
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -214,7 +208,6 @@ namespace _360_Staff_Survey_Web
                     myconn.ConnectionString = connectionString;
                     myconn.Open();
                     comm.Connection = myconn;
-
                     //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
                     staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
                     if (true)
@@ -241,7 +234,6 @@ namespace _360_Staff_Survey_Web
                             string staffname = dr["Name"].ToString();
 
                             SqlConnection myconn2 = null;
-                            int count2 = 0;
                             try
                             {
                                 myconn2 = new SqlConnection();
@@ -271,23 +263,18 @@ namespace _360_Staff_Survey_Web
                             }
                             catch (SqlException)
                             {
-
                             }
-
                             finally
                             {
                                 myconn2.Close();
                             }
                         }
-
                         dr.Close();
                     }
                 }
                 catch (SqlException)
                 {
-
                 }
-
                 finally
                 {
                     myconn.Close();
@@ -296,7 +283,6 @@ namespace _360_Staff_Survey_Web
             else if (question == "All Questions" && section != "All Sections" && enddate != "<----Please select one---->")
             {
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -305,7 +291,6 @@ namespace _360_Staff_Survey_Web
                     myconn.Open();
                     comm.Connection = myconn;
                     //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') WHERE StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
-
                     staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
                     if (true)
                     {
@@ -315,12 +300,10 @@ namespace _360_Staff_Survey_Web
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%')";
                         }
-
                         else if (role == "Officer" && function == "Manager")
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD' AND StaffInfo.Functions != 'Manager'";
                         }
-
                         else if (role == "Officer")
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
@@ -330,9 +313,7 @@ namespace _360_Staff_Survey_Web
                         while (dr.Read())
                         {
                             string staffname = dr["Name"].ToString();
-
                             SqlConnection myconn2 = null;
-                            int count2 = 0;
                             try
                             {
                                 myconn2 = new SqlConnection();
@@ -370,23 +351,23 @@ namespace _360_Staff_Survey_Web
                                     {
                                         listofSD.Add(dbmanager.GetIndividualStdDev(staffname, quesid, date));
                                     }
-
-                                    for (int k = 0; k < Chart1.Series[0].Points.Count; k++)
+                                    for (int i = 0; i < Chart1.Series.Count; i++)
                                     {
-                                        // Chart1.Series[0].Points[k].Label = "A: #VALY" + "\nS: " + Convert.ToDouble(listofSD[k]).ToString("F");
-                                        Chart1.Series[0].Points[k].Label = "A: #VALY";
+                                        for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
+                                        {
+                                            Chart1.Series[i].Points[k].Label = "A: #VALY" + "\nS: " + Convert.ToDouble(listofSD[k]).ToString("F");
+                                            //Chart1.Series[0].Points[k].Label = "A: #VALY";
+                                        }
+                                        Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                        Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                        Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                        Chart2.Visible = true;
                                     }
-
-                                    Chart2.Series[0].Points.AddXY(staffname, avgresult);
-                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart2.Visible = true;
                                 }
                                 dr2.Close();
                             }
                             catch (SqlException)
                             {
-
                             }
                             finally
                             {
@@ -398,7 +379,6 @@ namespace _360_Staff_Survey_Web
                 }
                 catch (SqlException)
                 {
-
                 }
                 finally
                 {
@@ -410,7 +390,6 @@ namespace _360_Staff_Survey_Web
                 int qid = dbmanager.GetQuestionIDFromQuestion(question);
 
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -420,7 +399,6 @@ namespace _360_Staff_Survey_Web
                     comm.Connection = myconn;
                     //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
                     staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
-
                     if (true)
                     {
                         string role = si.Role;
@@ -430,12 +408,10 @@ namespace _360_Staff_Survey_Web
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid";
                         }
-
                         else if (role == "Officer" && function == "Manager")
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD' AND StaffInfo.Functions != 'Manager'";
                         }
-
                         else if (role == "Officer")
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
@@ -448,7 +424,6 @@ namespace _360_Staff_Survey_Web
                             string staffname = dr["Name"].ToString();
 
                             SqlConnection myconn2 = null;
-                            int count2 = 0;
                             try
                             {
                                 myconn2 = new SqlConnection();
@@ -459,7 +434,6 @@ namespace _360_Staff_Survey_Web
                                 comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                                 comm2.Parameters.AddWithValue("@qid", qid);
                                 comm2.Parameters.AddWithValue("@name", staffname);
-
                                 SqlDataReader dr2 = comm2.ExecuteReader();
                                 while (dr2.Read())
                                 {
@@ -481,9 +455,7 @@ namespace _360_Staff_Survey_Web
                             }
                             catch (SqlException)
                             {
-
                             }
-
                             finally
                             {
                                 myconn2.Close();
@@ -544,38 +516,28 @@ namespace _360_Staff_Survey_Web
                 if (CheckBox2.Checked)
                 {
                     Chart1.Visible = true;
-                    //Label3.Visible = true;
-                    //Label4.Visible = true;
                     Chart2.Visible = true;
                 }
                 else
                 {
                     Chart1.Visible = true;
-                    //Label3.Visible = false;
-                    //Label4.Visible = true;
                     Chart2.Visible = false;
                 }
             }
             else if (CheckBox2.Checked)
             {
                 Chart1.Visible = false;
-                //Label3.Visible = true;
-                //Label4.Visible = false;
                 Chart2.Visible = true;
             }
             else
             {
                 CheckBox1.Checked = true;
                 Chart1.Visible = true;
-                //Label3.Visible = false;
-                //Label4.Visible = true;
                 Chart2.Visible = false;
             }
             if (question == "<----Please select one---->" || section == "<----Please select one---->")
             {
                 Chart1.Visible = false;
-                //Label3.Visible = false;
-                //Label4.Visible = false;
                 Chart2.Visible = false;
             }
         }
@@ -593,7 +555,6 @@ namespace _360_Staff_Survey_Web
                 int qid = dbmanager.GetQuestionIDFromQuestion(question);
 
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -612,7 +573,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -637,7 +597,6 @@ namespace _360_Staff_Survey_Web
                         catch (SqlException)
                         {
                         }
-
                         finally
                         {
                             myconn2.Close();
@@ -656,7 +615,6 @@ namespace _360_Staff_Survey_Web
             else if (question == "All Questions" && section == "All Sections" && enddate != "<----Please select one---->")
             {
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -672,7 +630,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -714,7 +671,6 @@ namespace _360_Staff_Survey_Web
             else if (question == "All Questions" && section != "All Sections" && enddate != "<----Please select one---->")
             {
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -732,7 +688,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -775,7 +730,6 @@ namespace _360_Staff_Survey_Web
                 int qid = dbmanager.GetQuestionIDFromQuestion(question);
 
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -792,7 +746,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
