@@ -1880,7 +1880,14 @@ namespace _360_Staff_Survey_Web.Class
                 myconn.ConnectionString = connectionString;
                 myconn.Open();
                 comm.Connection = myconn;
-                comm.CommandText = "select AVG(AppraisalResult) as TOTAL from StaffAppraisal where AppraisalStaffUserID=@uid and SystemEndDate=@dates and AppraisalQuestionID=@qid  and AppraisalResult != 0.0";
+                if (qid == 0)
+                {
+                    comm.CommandText = "select AVG(AppraisalResult) as TOTAL from StaffAppraisal where AppraisalStaffUserID=@uid and SystemEndDate=@dates and AppraisalResult != 0.0";
+                }
+                else
+                {
+                    comm.CommandText = "select AVG(AppraisalResult) as TOTAL from StaffAppraisal where AppraisalStaffUserID=@uid and SystemEndDate=@dates and AppraisalQuestionID=@qid and AppraisalResult != 0.0";
+                }           
                 comm.Parameters.AddWithValue("@uid", uid);
                 comm.Parameters.AddWithValue("@dates", dates);
                 comm.Parameters.AddWithValue("@qid", qid);

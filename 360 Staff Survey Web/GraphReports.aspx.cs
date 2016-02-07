@@ -9,6 +9,7 @@ using System.Collections;
 using System.Web.Security;
 using System.Security.Cryptography;
 using _360_Staff_Survey_Web.Class;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Globalization;
@@ -123,422 +124,121 @@ namespace _360_Staff_Survey_Web
         }
         protected void btnView_Click(object sender, EventArgs e)
         {
-            string question = ddlQuestions.SelectedValue;
+            int question = ddlQuestions.SelectedIndex;
             string section = ddlSections.SelectedValue;
             string enddate = ddlPeriod.SelectedValue;
             ArrayList results = new ArrayList();
             ArrayList appraisalID = new ArrayList();
             ArrayList names = dbmanager.GetAllNames();
-            ArrayList graphwidth = new ArrayList();
-            if (question != "All Questions" && section != "All Sections" && enddate != "<----Please select one---->")
+            string allsection = "";
+            int counter = 1;
+
+            if (section.Length > 0)
             {
-                int qid = dbmanager.GetQuestionIDFromQuestion(question);
-
-                SqlConnection myconn = null;
-                try
+                foreach (string name in names)
                 {
-                    myconn = new SqlConnection();
-                    SqlCommand comm = new SqlCommand();
-                    myconn.ConnectionString = connectionString;
-                    myconn.Open();
-                    comm.Connection = myconn;
-                    comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' AND StaffAppraisal.SystemEndDate = @enddate)";
-                    comm.Parameters.AddWithValue("@qid", qid);
-                    comm.Parameters.AddWithValue("@section", section);
-                    comm.Parameters.AddWithValue("@enddate", enddate);
-                    SqlDataReader dr = comm.ExecuteReader();
-                    while (dr.Read())
+                    if (section == "All section")
                     {
-                        string staffname = dr["Name"].ToString();
-
-                        SqlConnection myconn2 = null;
-                        try
+                        ArrayList list = new ArrayList();
+                        foreach (ListItem sect in ddlSections.Items)
                         {
-                            myconn2 = new SqlConnection();
-                            SqlCommand comm2 = new SqlCommand();
-                            myconn2.ConnectionString = connectionString;
-                            myconn2.Open();
-                            comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
-                            comm2.Parameters.AddWithValue("@qid", qid);
-                            comm2.Parameters.AddWithValue("@name", staffname);
-                            SqlDataReader dr2 = comm2.ExecuteReader();
-                            while (dr2.Read())
+                            if (sect.Text != "All section" && sect.Text != "<----Please select one---->")
                             {
-                                string avgresult = dr2["AvgResult"].ToString();
-                                graphwidth.Add(staffname);
-
-                                Chart1.Series[0].Points.AddXY(staffname, avgresult);
-                                Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                Chart1.Visible = true;
-
-                                Chart2.Series[0].Points.AddXY(staffname, avgresult);
-                                Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                Chart2.Visible = true;
+                                list.Add(sect);
                             }
-                            dr2.Close();
                         }
-                        catch (SqlException)
+                        foreach (ListItem sectionlist in list)
                         {
+                            if (counter == list.Count)
+                            {
+                                allsection += sectionlist.Text;
+                            }
+                            else
+                            {
+                                allsection += sectionlist.Text + ",";
+                            }
+                            counter++;
                         }
-                        finally
-                        {
-                            myconn2.Close();
-                        }
+                        populateChartForStaff(name, allsection, question);
                     }
-                    dr.Close();
-                }
-                catch (SqlException)
-                {
-                }
-                finally
-                {
-                    myconn.Close();
-                }
-            }
-            else if (question == "All Questions" && section == "All Sections" && enddate != "<----Please select one---->")
-            {
-                SqlConnection myconn = null;
-                try
-                {
-                    myconn = new SqlConnection();
-                    SqlCommand comm = new SqlCommand();
-                    myconn.ConnectionString = connectionString;
-                    myconn.Open();
-                    comm.Connection = myconn;
-                    //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
-                    staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
-                    if (true)
+                    else
                     {
-                        string role = si.Role;
-                        string function = si.Function;
-                        if (role == "Director")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID";
-                        }
-
-                        else if (role == "Officer" && function == "Manager")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD' AND StaffInfo.Functions != 'Manager'";
-                        }
-
-                        else if (role == "Officer")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
-                        }
-                        SqlDataReader dr = comm.ExecuteReader();
-                        while (dr.Read())
-                        {
-                            string staffname = dr["Name"].ToString();
-
-                            SqlConnection myconn2 = null;
-                            try
-                            {
-                                myconn2 = new SqlConnection();
-                                SqlCommand comm2 = new SqlCommand();
-                                myconn2.ConnectionString = connectionString;
-                                myconn2.Open();
-                                comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
-                                comm2.Parameters.AddWithValue("@name", staffname);
-                                SqlDataReader dr2 = comm2.ExecuteReader();
-                                while (dr2.Read())
-                                {
-                                    string avgresult = dr2["AvgResult"].ToString();
-                                    graphwidth.Add(staffname);
-
-                                    Chart1.Series[0].Points.AddXY(staffname, avgresult);
-                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart1.Visible = true;
-
-                                    Chart2.Series[0].Points.AddXY(staffname, avgresult);
-                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart2.Visible = true;
-                                }
-                                dr2.Close();
-                            }
-                            catch (SqlException)
-                            {
-                            }
-                            finally
-                            {
-                                myconn2.Close();
-                            }
-                        }
-                        dr.Close();
+                        populateChartForStaff(name, section, question);
                     }
                 }
-                catch (SqlException)
-                {
-                }
-                finally
-                {
-                    myconn.Close();
-                }
             }
-            else if (question == "All Questions" && section != "All Sections" && enddate != "<----Please select one---->")
-            {
-                SqlConnection myconn = null;
-                try
-                {
-                    myconn = new SqlConnection();
-                    SqlCommand comm = new SqlCommand();
-                    myconn.ConnectionString = connectionString;
-                    myconn.Open();
-                    comm.Connection = myconn;
-                    //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') WHERE StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
-                    staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
-                    if (true)
-                    {
-                        string role = si.Role;
-                        string function = si.Function;
-                        if (role == "Director")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%')";
-                        }
-                        else if (role == "Officer" && function == "Manager")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD' AND StaffInfo.Functions != 'Manager'";
-                        }
-                        else if (role == "Officer")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
-                        }
-                        comm.Parameters.AddWithValue("@section", section);
-                        SqlDataReader dr = comm.ExecuteReader();
-                        while (dr.Read())
-                        {
-                            string staffname = dr["Name"].ToString();
-                            SqlConnection myconn2 = null;
-                            try
-                            {
-                                myconn2 = new SqlConnection();
-                                SqlCommand comm2 = new SqlCommand();
-                                myconn2.ConnectionString = connectionString;
-                                myconn2.Open();
-                                comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
-                                comm2.Parameters.AddWithValue("@name", staffname);
+        }
+        protected void populateChartForStaff(string staff, string section, int questionID)
+        {
+            Chart1.Series.Clear();
+            Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+            Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+            DataTable table = new DataTable();
+            table.Columns.Add("StaffName");
+            table.Columns.Add("AverageGrading");
+            table.Columns.Add("Section");
 
-                                SqlDataReader dr2 = comm2.ExecuteReader();
-                                while (dr2.Read())
-                                {
-                                    string avgresult = dr2["AvgResult"].ToString();
-
-                                    graphwidth.Add(staffname);
-                                    Chart1.Series[0].Points.AddXY(staffname, avgresult);
-                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart1.Visible = true;
-
-                                    int graphwidthx = graphwidth.Count * 150;
-
-                                    Chart1.Width = graphwidthx;
-                                    Chart1.Height = 600;
-                                    Chart1.ChartAreas[0].AxisY.Title = "Average Score Recorded";
-                                    Chart1.ChartAreas[0].AxisX.Title = "Name of Staffs";
-                                    Chart1.ChartAreas[0].AxisX.Interval = 1;
-
-                                    ArrayList listofSD = new ArrayList();
-                                    ArrayList listofdates = dbmanager.GetListofDatesViaSection(section);
-                                    int quesid = dbmanager.GetQuestionIDFromQuestion(question);
-
-                                    foreach (DateTime date in listofdates)
-                                    {
-                                        listofSD.Add(dbmanager.GetIndividualStdDev(staffname, quesid, date));
-                                    }
-                                    for (int i = 0; i < Chart1.Series.Count; i++)
-                                    {
-                                        for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
-                                        {
-                                            Chart1.Series[i].Points[k].Label = "A: #VALY" + "\nS: " + Convert.ToDouble(listofSD[k]).ToString("F");
-                                            //Chart1.Series[0].Points[k].Label = "A: #VALY";
-                                        }
-                                        Chart2.Series[0].Points.AddXY(staffname, avgresult);
-                                        Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                        Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                        Chart2.Visible = true;
-                                    }
-                                }
-                                dr2.Close();
-                            }
-                            catch (SqlException)
-                            {
-                            }
-                            finally
-                            {
-                                myconn2.Close();
-                            }
-                        }
-                        dr.Close();
-                    }
-                }
-                catch (SqlException)
-                {
-                }
-                finally
-                {
-                    myconn.Close();
-                }
-            }
-            else if (question != "All Questions" && section == "All Sections" && enddate != "<----Please select one---->")
-            {
-                int qid = dbmanager.GetQuestionIDFromQuestion(question);
-
-                SqlConnection myconn = null;
-                try
-                {
-                    myconn = new SqlConnection();
-                    SqlCommand comm = new SqlCommand();
-                    myconn.ConnectionString = connectionString;
-                    myconn.Open();
-                    comm.Connection = myconn;
-                    //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
-                    staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
-                    if (true)
-                    {
-                        string role = si.Role;
-                        string function = si.Function;
-
-                        if (role == "Director")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid";
-                        }
-                        else if (role == "Officer" && function == "Manager")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD' AND StaffInfo.Functions != 'Manager'";
-                        }
-                        else if (role == "Officer")
-                        {
-                            comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
-                        }
-                        comm.Parameters.AddWithValue("@qid", qid);
-
-                        SqlDataReader dr = comm.ExecuteReader();
-                        while (dr.Read())
-                        {
-                            string staffname = dr["Name"].ToString();
-
-                            SqlConnection myconn2 = null;
-                            try
-                            {
-                                myconn2 = new SqlConnection();
-                                SqlCommand comm2 = new SqlCommand();
-                                myconn2.ConnectionString = connectionString;
-                                myconn2.Open();
-                                comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
-                                comm2.Parameters.AddWithValue("@qid", qid);
-                                comm2.Parameters.AddWithValue("@name", staffname);
-                                SqlDataReader dr2 = comm2.ExecuteReader();
-                                while (dr2.Read())
-                                {
-                                    string avgresult = dr2["AvgResult"].ToString();
-
-                                    graphwidth.Add(staffname);
-
-                                    Chart1.Series[0].Points.AddXY(staffname, avgresult);
-                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart1.Visible = true;
-
-                                    Chart2.Series[0].Points.AddXY(staffname, avgresult);
-                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart2.Visible = true;
-                                }
-                                dr2.Close();
-                            }
-                            catch (SqlException)
-                            {
-                            }
-                            finally
-                            {
-                                myconn2.Close();
-                            }
-                        }
-                        dr.Close();
-                    }
-                }
-                catch (SqlException)
-                {
-                }
-                finally
-                {
-                    myconn.Close();
-                }
-            }
-            // chart.Series[0].Points.DataBindXY(xAxis, yAxis);
-            // where xAxis is List<String> and yAxis is List<Double>
-            /*int graphwidthx = graphwidth.Count * 150;
-
-            Chart1.Width = graphwidthx;
-            Chart1.Height = 600;
-            Chart1.ChartAreas[0].AxisY.Title = "Average Score Recorded";
-            Chart1.ChartAreas[0].AxisX.Title = "Name of Staffs";
-            Chart1.ChartAreas[0].AxisX.Interval = 1;
-
-            ArrayList listofSD = new ArrayList();
             ArrayList listofdates = dbmanager.GetListofDatesViaSection(section);
-            int quesid = dbmanager.GetQuestionIDFromQuestion(question);
+            ArrayList listofquestion = dbmanager.GetAllQuestion();
+            ArrayList listofstaff = dbmanager.GetAllStaffDetails();
 
-            foreach (string name in names)
+            string[] sectsplit = section.Split(',');
+            foreach (DateTime date in listofdates)
             {
-                foreach (DateTime date in listofdates)
+                foreach (string sect in sectsplit)
                 {
-                    listofSD.Add(dbmanager.GetIndividualStdDev(name, section, quesid, date));
+                    double result = 0.0;
+                    double staffAverage = 0.0;
+
+                    int count = 0;
+                    foreach (staffinfo staffname in listofstaff)
+                    {
+                        if (staffname.Section.Contains(sect))
+                        {
+                            foreach (Question qn in listofquestion)
+                            {
+                                staffAverage += dbmanager.GetAvgRating(staffname.Uid, date, qn.QuestionID);
+                            }
+                            count++;
+                        }
+                    }
+                    table.Rows.Add(staffAverage, staff);
                 }
             }
-            for (int i = 0; i < Chart1.Series.Count; i++)
+            bool display = false;
+            for (int i = 0; i < table.Rows.Count; i++)
             {
-                for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
+                if (table.Rows[i].ItemArray[1].ToString() == "0")
                 {
-                    // Chart1.Series[i].Points[k].Label = "A: " + "#VALY\n" + " S: " + Convert.ToDouble(listofSD[k]).ToString("F") + "\n";
-                    Chart1.Series[i].Points[k].Label = "A: #VALY";
-                }
-            }
-            //Label3.Visible = true;
-
-            Chart2.Width = graphwidthx;
-            Chart2.Height = 600;
-            Chart2.ChartAreas[0].AxisY.Title = "Average Score Recorded";
-            Chart2.ChartAreas[0].AxisX.Title = "Name of Staffs";
-            Chart2.ChartAreas[0].AxisX.Interval = 1;
-            Chart2.Series[0].Label = "#VALY" + "\nS: " + "\nM: ";
-            //Label4.Visible = true;
-            */
-            if (CheckBox1.Checked)
-            {
-                if (CheckBox2.Checked)
-                {
-                    Chart1.Visible = true;
-                    Chart2.Visible = true;
+                    display = false;
                 }
                 else
                 {
-                    Chart1.Visible = true;
-                    Chart2.Visible = false;
+                    display = true;
+                    break;
                 }
             }
-            else if (CheckBox2.Checked)
+            if (display == true)
             {
-                Chart1.Visible = false;
-                Chart2.Visible = true;
+                Chart1.Visible = true;
+                DataTableReader datareader = table.CreateDataReader();
+                Chart1.DataBindCrossTable(datareader, "Section", "StaffName", "AverageGrading", "");
+                Chart1.ChartAreas[0].AxisX.Title = "Staff Names";
+                Chart1.ChartAreas[0].AxisY.Title = "Average Grade";
+                Chart1.Width = 1300;
+                Chart1.Height = 600;
+
+                for (int i = 0; i < Chart1.Series.Count; i++)
+                {
+                    for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
+                    {
+                        Chart1.Series[i].Points[k].Label = "A: " + "#VALY\n";
+                    }
+                }
             }
             else
             {
-                CheckBox1.Checked = true;
-                Chart1.Visible = true;
-                Chart2.Visible = false;
-            }
-            if (question == "<----Please select one---->" || section == "<----Please select one---->")
-            {
                 Chart1.Visible = false;
-                Chart2.Visible = false;
             }
         }
         protected void exportToExcel_Click(object sender, System.Web.UI.ImageClickEventArgs e)
