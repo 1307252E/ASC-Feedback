@@ -188,6 +188,46 @@ namespace _360_Staff_Survey_Web
                                 Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart2.Visible = true;
+
+                                SqlConnection myconn3 = null;
+                                try
+                                {
+                                    myconn3 = new SqlConnection();
+                                    SqlCommand comm3 = new SqlCommand();
+                                    myconn3.ConnectionString = connectionString;
+                                    myconn3.Open();
+                                    comm3.Connection = myconn3;
+                                    if (questionID == 0)
+                                    {
+                                        comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                    }
+                                    else
+                                    {
+                                        comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                    }
+                                    comm3.Parameters.AddWithValue("@name", staff);
+                                    comm3.Parameters.AddWithValue("@section", section);
+                                    comm3.Parameters.AddWithValue("@qID", questionID);
+                                    SqlDataReader dr3 = comm3.ExecuteReader();
+                                    while (dr3.Read())
+                                    {
+                                        string stddev = dr3["StdDeviation"].ToString();
+
+                                        for (int i = 0; i < Chart1.Series[0].Points.Count; i++)
+                                        {
+                                            Chart1.Series[0].Points[i].Label = "A: #VALY";
+                                        }
+
+                                    }
+                                    dr3.Close();
+                                }
+                                catch (SqlException)
+                                {
+                                }
+                                finally
+                                {
+                                    myconn3.Close();
+                                }
                             }
                             dr2.Close();
                         }
@@ -269,6 +309,45 @@ namespace _360_Staff_Survey_Web
                                     Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
+
+                                    SqlConnection myconn3 = null;
+                                    try
+                                    {
+                                        myconn3 = new SqlConnection();
+                                        SqlCommand comm3 = new SqlCommand();
+                                        myconn3.ConnectionString = connectionString;
+                                        myconn3.Open();
+                                        comm3.Connection = myconn3;
+                                        if (questionID == 0)
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        else
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        comm3.Parameters.AddWithValue("@name", staff);
+                                        comm3.Parameters.AddWithValue("@section", section);
+                                        comm3.Parameters.AddWithValue("@qID", questionID);
+                                        SqlDataReader dr3 = comm3.ExecuteReader();
+                                        while (dr3.Read())
+                                        {
+                                            string stddev = dr3["StdDeviation"].ToString();
+                                            for (int i = 0; i < Chart1.Series[0].Points.Count; i++)
+                                            {
+                                                Chart1.Series[0].Points[i].Label = "A: #VALY";
+                                            }
+
+                                        }
+                                        dr3.Close();
+                                    }
+                                    catch (SqlException)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        myconn3.Close();
+                                    }
                                 }
                                 dr2.Close();
                             }
@@ -350,6 +429,45 @@ namespace _360_Staff_Survey_Web
                                     Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
+
+                                    SqlConnection myconn3 = null;
+                                    try
+                                    {
+                                        myconn3 = new SqlConnection();
+                                        SqlCommand comm3 = new SqlCommand();
+                                        myconn3.ConnectionString = connectionString;
+                                        myconn3.Open();
+                                        comm3.Connection = myconn3;
+                                        if (questionID == 0)
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        else
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        comm3.Parameters.AddWithValue("@name", staff);
+                                        comm3.Parameters.AddWithValue("@section", section);
+                                        comm3.Parameters.AddWithValue("@qID", questionID);
+                                        SqlDataReader dr3 = comm3.ExecuteReader();
+                                        while (dr3.Read())
+                                        {
+                                            string stddev = dr3["StdDeviation"].ToString();
+                                            for (int i = 0; i < Chart1.Series[0].Points.Count; i++)
+                                            {
+                                                Chart1.Series[0].Points[i].Label = "A: #VALY";
+                                            }
+
+                                        }
+                                        dr3.Close();
+                                    }
+                                    catch (SqlException)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        myconn3.Close();
+                                    }
                                 }
                                 dr2.Close();
                             }
@@ -431,12 +549,52 @@ namespace _360_Staff_Survey_Web
                                     Chart1.Series[0].Points.AddXY(staffname, avgresult);
                                     Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-                                    Chart1.Visible = true; 
+                                    Chart1.Visible = true;
+                                    
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
                                     Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
+
+                                    SqlConnection myconn3 = null;
+                                    try
+                                    {
+                                        myconn3 = new SqlConnection();
+                                        SqlCommand comm3 = new SqlCommand();
+                                        myconn3.ConnectionString = connectionString;
+                                        myconn3.Open();
+                                        comm3.Connection = myconn3;
+                                        if (questionID == 0)
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        else
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        comm3.Parameters.AddWithValue("@name", staff);
+                                        comm3.Parameters.AddWithValue("@section", section);
+                                        comm3.Parameters.AddWithValue("@qID", questionID);
+                                        SqlDataReader dr3 = comm3.ExecuteReader();
+                                        while (dr3.Read())
+                                        {
+                                            string stddev = dr3["StdDeviation"].ToString();
+                                            for (int i = 0; i < Chart1.Series[0].Points.Count; i++)
+                                            {
+                                                Chart1.Series[0].Points[i].Label = "A: #VALY";
+                                            }
+                                            
+                                        }
+                                        dr3.Close();
+                                    }
+                                    catch (SqlException)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        myconn3.Close();
+                                    }
                                 }
                                 dr2.Close();
                             }
@@ -468,7 +626,6 @@ namespace _360_Staff_Survey_Web
             Chart1.ChartAreas[0].AxisY.Title = "Average Score Recorded";
             Chart1.ChartAreas[0].AxisX.Title = "Name of Staffs";
             Chart1.ChartAreas[0].AxisX.Interval = 1;
-            Chart1.Series[0].Label = "A: #VALY";
 
             Chart2.Width = graphwidthx;
             Chart2.Height = 600;
