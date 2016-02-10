@@ -1288,7 +1288,7 @@ namespace _360_Staff_Survey_Web.Class
                 }
                 comm.Parameters.AddWithValue("@name", name);
                 comm.Parameters.AddWithValue("@section", section);
-                comm.Parameters.AddWithValue("@qID", questionID);
+                comm.Parameters.AddWithValue("@quesID", questionID);
                 comm.Parameters.AddWithValue("@date", date);
                 
                 SqlDataReader dr = comm.ExecuteReader();

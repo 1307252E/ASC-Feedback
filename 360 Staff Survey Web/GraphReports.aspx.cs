@@ -474,13 +474,13 @@ namespace _360_Staff_Survey_Web
 
             ArrayList listofSD = new ArrayList();
             ArrayList listofdates = dbmanager.GetListofDatesViaSection(section);
-            int quesid = dbmanager.GetQuestionIDFromQuestion(question);
+            int questionid = dbmanager.GetQuestionIDFromQuestion(question);
 
             foreach (string name in names)
             {
                 foreach (DateTime date in listofdates)
                 {
-                    listofSD.Add(dbmanager.GetIndividualStdDev(name, section, quesid, date));
+                    listofSD.Add(dbmanager.GetIndividualStdDev(name, section, questionid, date));
                 }
             }
             for (int i = 0; i < Chart1.Series.Count; i++)
