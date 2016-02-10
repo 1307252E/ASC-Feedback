@@ -1875,7 +1875,7 @@ namespace _360_Staff_Survey_Web
                 }
                 double standarddevs = standarddev / Convert.ToDouble(listofstandarddev.Count);
 
-                standarddeviationfinal = (Math.Round(Math.Sqrt(standarddevs), 1));
+                standarddeviationfinal = Math.Sqrt(standarddevs);
 
                 //standarddeviationfinal = (Math.Round(standarddeviationfinal, 1));
                 return standarddeviationfinal;
@@ -2038,7 +2038,7 @@ namespace _360_Staff_Survey_Web
                     //content2 += "<br>";
                     //content2 += "<br>";
                     content2 += "<td style='border-color:#000080' width='100'>";
-                    content2 += "&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation of grade: " + standarddeviation;
+                    content2 += "&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation of grade: " + standarddeviation.ToString("F");
                     content2 += "</td>";
                     //content2 += "<br>";
                     //content2 += "<br>";
@@ -2615,7 +2615,7 @@ namespace _360_Staff_Survey_Web
                     //content += "<br>";
                     //content += "<br>";
                     content += "<td style='border-color:#000080' width='100'>";
-                    content += "&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation of grade: " + standarddeviation;
+                    content += "&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation of grade: " + standarddeviation.ToString("F");
                     content += "</td>";
                     //content += "<br>";
                     //content += "<br>";
@@ -2850,7 +2850,7 @@ namespace _360_Staff_Survey_Web
                         //content += "<br>";
                         //content += "<br>";
                         content += "<td style='border-color:#000080' width='100'>";
-                        content += "&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation of grade: " + standarddeviation;
+                        content += "&nbsp;&nbsp;&nbsp;&nbsp;Standard Deviation of grade: " + standarddeviation.ToString("F");
                         content += "</td>";
                         //content += "<br>";
                         //content += "<br>";

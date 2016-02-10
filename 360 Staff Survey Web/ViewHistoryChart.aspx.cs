@@ -16,8 +16,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace _360_Staff_Survey_Web
 {
     public partial class ViewHistoryChart : System.Web.UI.Page
-    {
-        string tmpChartName = "test2.jpg";
+    {       
         public static string lbl;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -84,7 +83,6 @@ namespace _360_Staff_Survey_Web
         public ArrayList RemoveDups(ArrayList items)
         {
             ArrayList noDups = new ArrayList();
-
             foreach (string strItem in items)
             {
                 if (!noDups.Contains(strItem.Trim()))
@@ -106,7 +104,6 @@ namespace _360_Staff_Survey_Web
                 ArrayList listofselectfunction = new ArrayList();
                 ArrayList listofselectsection = new ArrayList();
                 ArrayList listofselectquestion = new ArrayList();
-
                 if (listoffunction.Count > 0 && listofsection.Count > 0 && listofquestion.Count > 0)
                 {
                     #region for section group
@@ -123,7 +120,6 @@ namespace _360_Staff_Survey_Web
                     ddlFilterFunction.DataSource = listofselectfunction;
                     ddlFilterFunction.DataBind();
                     #endregion
-
                     #region for function group
                     listoffunction.Insert(0, "<----Please select one---->");
                     listoffunction.Insert(1, "<--------ASC School-------->");
@@ -220,7 +216,6 @@ namespace _360_Staff_Survey_Web
                     ArrayList questionall = new ArrayList();
                     ArrayList listofselectfunction = new ArrayList();
                     ArrayList listofselectsection = new ArrayList();
-
                     if (listoffunction.Count > 0 && listofsection.Count > 0)
                     {
                         listofsection.Insert(0, "<----Please select one---->");
@@ -278,7 +273,6 @@ namespace _360_Staff_Survey_Web
 
                     ArrayList listofselectfunction = new ArrayList();
                     ArrayList listofselectsection = new ArrayList();
-
                     if (listoffunction.Count > 0 && listofsection.Count > 0 && listofquestion.Count > 0)
                     {
                         listofsection.Insert(0, "<----Please select one---->");
@@ -397,7 +391,6 @@ namespace _360_Staff_Survey_Web
             else
             {
                 MultiView1.Visible = false;
-
                 if (ddlSelectSection.Text == "<--------ASC School-------->")
                 {
                     ddlFilterFunction.Items.Clear();
@@ -464,7 +457,6 @@ namespace _360_Staff_Survey_Web
 
                 ArrayList standarddevlist = new ArrayList();
                 ArrayList results = dbmanager.GetAllStaffAppraisal();
-
                 for (int i = 0; i < results.Count; i++)
                 {
                     final = final + Convert.ToDouble(results[i].ToString());
@@ -475,7 +467,6 @@ namespace _360_Staff_Survey_Web
                 double squareroot = 0.00;
                 double equation = 0.00;
                 double square = 0.00;
-
                 for (int q = 0; q < results.Count; q++)
                 {
                     equation = Convert.ToDouble(results[q].ToString()) - average;
@@ -506,7 +497,6 @@ namespace _360_Staff_Survey_Web
 
                 ArrayList standarddevlist = new ArrayList();
                 ArrayList results = dbmanager.GetAllStaffAppraisal();
-
                 for (int i = 0; i < results.Count; i++)
                 {
                     final = final + Convert.ToDouble(results[i].ToString());
@@ -517,7 +507,6 @@ namespace _360_Staff_Survey_Web
                 double squareroot = 0.00;
                 double equation = 0.00;
                 double square = 0.00;
-
                 for (int q = 0; q < results.Count; q++)
                 {
                     equation = Convert.ToDouble(results[q].ToString()) - average;
@@ -542,7 +531,6 @@ namespace _360_Staff_Survey_Web
                 ArrayList results = dbmanager.GetAllStaffAppraisal();
 
                 double final = 0.00;
-
                 for (int i = 0; i < results.Count; i++)
                 {
                     final = final + Convert.ToDouble(results[i].ToString());
@@ -642,32 +630,28 @@ namespace _360_Staff_Survey_Web
 
                 // decare and get items
                 double result = 0.0;
-                //double staffAverage = 0.0;
-                //double staffAverageResult = 0.0;
 
                 //ArrayList listofstaff = dbmanager.GetAllStaffDetails();
                 //ArrayList listofquestion = dbmanager.GetAllQuestion();
                 List<double> stdDeviation = new List<double>();
                 foreach (DateTime date in listofdates)
                 {
-                    //foreach (staffinfo staff in listofstaff)
-                    //{
-                    //foreach (Question qn in listofquestion)
-                    //{
-                    //staffAverage += dbmanager.GetAvgRating(staff.Uid, date, qn.QuestionID);
-                    //staffAverage += dbmanager.GetAverageStaffPeriod(staff.Uid, date);
-                    //}
-                    //int countquestion = dbmanager.GetTotalCountQuestionInPeriod(staff.Uid, date);
-                    //staffAverageResult = Math.Round((staffAverage / countquestion), 1);
-                    //}
-                    //result = Math.Round((staffAverageResult / listofstaff.Count), 1);
+                    /*foreach (staffinfo staff in listofstaff)
+                    {
+                    foreach (Question qn in listofquestion)
+                    {
+                    staffAverage += dbmanager.GetAvgRating(staff.Uid, date, qn.QuestionID);
+                    staffAverage += dbmanager.GetAverageStaffPeriod(staff.Uid, date);
+                    }
+                    int countquestion = dbmanager.GetTotalCountQuestionInPeriod(staff.Uid, date);
+                    staffAverageResult = Math.Round((staffAverage / countquestion), 1);
+                    }
+                    result = Math.Round((staffAverageResult / listofstaff.Count), 1); */
                     result = dbmanager.GetAverageAllStaffPeriod(date);
                     string monthname = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(date.Month);
                     table.Rows.Add(result, monthname.Substring(0, 3) + "/" + date.Year.ToString().Substring(2, 2));
 
                     result = 0.0;
-                    //staffAverage = 0.0;
-                    //staffAverageResult = 0.0;
                 }
                 bool display = false;
                 for (int i = 0; i < table.Rows.Count; i++)
@@ -734,7 +718,6 @@ namespace _360_Staff_Survey_Web
 
                 ArrayList listofquestion = dbmanager.GetAllQuestion();
                 ArrayList listofstaff = dbmanager.GetAllStaffDetails();
-
                 foreach (DateTime date in listofdates)
                 {
                     foreach (string function in functionsplit)
@@ -743,7 +726,6 @@ namespace _360_Staff_Survey_Web
                         double staffAverage = 0.0;
                         double staffAverageResult = 0.0;
                         int count = 0;
-
                         foreach (staffinfo staff in listofstaff)
                         {
                             if (staff.Section.Contains(section) && staff.Function.Equals(function))
@@ -777,8 +759,8 @@ namespace _360_Staff_Survey_Web
                         }
                         double avg = dbmanager.GetAvgAppraisalForPeriod(date);
                         double sd = dbmanager.GetStdDevAppraisalForPeriod(date);
-                        ArrayList MedList = new ArrayList();
 
+                        ArrayList MedList = new ArrayList();
                         MedList.Add(GetMedianFunctionViaPeriod(date));
 
                         string monthname = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(date.Month);
@@ -813,12 +795,11 @@ namespace _360_Staff_Survey_Web
                     Chart1.ChartAreas[0].AxisY.Title = "Average grade";
                     Chart1.Legends[0].Enabled = true;
                     Chart1.Legends[0].BackColor = System.Drawing.Color.Transparent;
-                    Chart1.Width = 1000;
+                    Chart1.Width = 1300;
                     Chart1.Height = 600;
 
                     ArrayList listOfStDev = new ArrayList();
                     ArrayList listOfMed = new ArrayList();
-
                     foreach (DateTime date in listofdates)
                     {
                         string[] listOfFunctions = functionlist.Split(',');
@@ -830,14 +811,11 @@ namespace _360_Staff_Survey_Web
                             listOfSDForFunction.Add(dbmanager.GetStdDevAppraisalForFunction(section, listOfFunctions[x], date, questionID));
                             listOfMedForFunction.Add(GetMedianFunctionViaSectionCount(section, listOfFunctions[x], date, questionID));
                         }
-
                         listOfStDev.Add(String.Join(",",listOfSDForFunction.ToArray()));
                         listOfMed.Add(String.Join(",",listOfMedForFunction.ToArray()));
-                    }
-                    
+                    }                    
                     for (int i = 0; i < Chart1.Series.Count; i++)
                     {
-
                         for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
                         {
                             string[] listOfSDPerSeries = listOfStDev[k].ToString().Split(',');
@@ -845,9 +823,6 @@ namespace _360_Staff_Survey_Web
                             Chart1.Series[i].Points[k].Label = "A: " + "#VALY\n" + "S: " + Convert.ToDouble(listOfSDPerSeries[i]).ToString("F") + "\nM: " + Convert.ToDouble(listOfMedPerSeries[i]).ToString("0.0");
                         }
                     }
-                    string imgPath = HttpContext.Current.Request.PhysicalApplicationPath + tmpChartName;
-                    Chart1.SaveImage(imgPath);
-
                     MultiView1.ActiveViewIndex = 0;
                 }
                 else
@@ -881,7 +856,6 @@ namespace _360_Staff_Survey_Web
 
                 ArrayList listofquestion = dbmanager.GetAllQuestion();
                 ArrayList listofstaff = dbmanager.GetAllStaffDetails();
-
                 foreach (DateTime date in listofdates)
                 {
                     foreach (string section in sectionsplit)
@@ -954,7 +928,7 @@ namespace _360_Staff_Survey_Web
                     Chart1.Legends.Add("Legend");
                     Chart1.Legends[0].Enabled = true;
                     Chart1.Legends[0].BackColor = System.Drawing.Color.Transparent;
-                    Chart1.Width = 1000;
+                    Chart1.Width = 1300;
                     Chart1.Height = 600;
                     Chart1.Series[0].ToolTip = "populateChartSectionViaFunction";
 
@@ -1246,12 +1220,17 @@ namespace _360_Staff_Survey_Web
         {
             Response.Clear();
             Response.Buffer = true;
-            Response.AddHeader("content-disposition", "attachment;filename=ChartExport.xls");
+            Response.AddHeader("content-disposition", "attachment;filename=ViewHistoryChart.xls");
             Response.ContentType = "application/vnd.ms-excel";
             Response.Charset = "";
             StringWriter sw = new StringWriter();
             HtmlTextWriter hw = new HtmlTextWriter(sw);
             Chart1.RenderControl(hw);
+
+            string tmpChartName = "ChartImage.jpg";
+            string imgPath = HttpContext.Current.Request.PhysicalApplicationPath + tmpChartName;
+            Chart1.SaveImage(imgPath);
+
             string src = tmpChartName;
             string img = string.Format("<img src = '{0}{1}' />", HttpContext.Current.Request.PhysicalApplicationPath, src);
 

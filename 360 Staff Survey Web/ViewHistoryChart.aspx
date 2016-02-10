@@ -190,9 +190,7 @@
                             <asp:Label ID="lbDisplay" runat="server" CssClass="label"></asp:Label></td>
                     </tr>
                 </table>
-
             </div>
-
             <br />
         </asp:View>
     </asp:MultiView>

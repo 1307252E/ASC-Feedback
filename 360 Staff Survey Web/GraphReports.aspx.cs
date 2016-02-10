@@ -9,6 +9,7 @@ using System.Collections;
 using System.Web.Security;
 using System.Security.Cryptography;
 using _360_Staff_Survey_Web.Class;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Globalization;
@@ -37,7 +38,6 @@ namespace _360_Staff_Survey_Web
             ArrayList questionall = new ArrayList();
             ArrayList shortdate = new ArrayList();
             ArrayList listofdates = dbmanager.GetAllDates();
-            Question quest = null;
             int index = 0;
             try
             {
@@ -124,19 +124,30 @@ namespace _360_Staff_Survey_Web
         }
         protected void btnView_Click(object sender, EventArgs e)
         {
-            string question = ddlQuestions.SelectedValue;
+            int question = ddlQuestions.SelectedIndex;
             string section = ddlSections.SelectedValue;
             string enddate = ddlPeriod.SelectedValue;
+            string name = "";
+
             ArrayList results = new ArrayList();
             ArrayList appraisalID = new ArrayList();
             ArrayList names = dbmanager.GetAllNames();
+
+            populateChartForStaff(name, section, question);
+        }
+        protected void populateChartForStaff(string staff, string section, int questionID)
+        {
+            string question = ddlQuestions.SelectedValue;
+            string enddate = ddlPeriod.SelectedValue;
+            ArrayList names = dbmanager.GetAllNames();
+
             ArrayList graphwidth = new ArrayList();
+
             if (question != "All Questions" && section != "All Sections" && enddate != "<----Please select one---->")
             {
                 int qid = dbmanager.GetQuestionIDFromQuestion(question);
 
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -144,17 +155,18 @@ namespace _360_Staff_Survey_Web
                     myconn.ConnectionString = connectionString;
                     myconn.Open();
                     comm.Connection = myconn;
+
                     comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' AND StaffAppraisal.SystemEndDate LIKE '" + enddate + "%')";
                     comm.Parameters.AddWithValue("@qid", qid);
                     comm.Parameters.AddWithValue("@section", section);
                     //comm.Parameters.AddWithValue("@enddate", enddate);
+
                     SqlDataReader dr = comm.ExecuteReader();
                     while (dr.Read())
                     {
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -165,7 +177,9 @@ namespace _360_Staff_Survey_Web
                             comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@qid", qid);
                             comm2.Parameters.AddWithValue("@name", staffname);
+
                             //comm2.Parameters.AddWithValue("@enddate", enddate);
+
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())
                             {
@@ -173,10 +187,54 @@ namespace _360_Staff_Survey_Web
                                 graphwidth.Add(staffname);
 
                                 Chart1.Series[0].Points.AddXY(staffname, avgresult);
+                                Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart1.Visible = true;
 
                                 Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                 Chart2.Visible = true;
+
+                                SqlConnection myconn3 = null;
+                                try
+                                {
+                                    myconn3 = new SqlConnection();
+                                    SqlCommand comm3 = new SqlCommand();
+                                    myconn3.ConnectionString = connectionString;
+                                    myconn3.Open();
+                                    comm3.Connection = myconn3;
+                                    if (questionID == 0)
+                                    {
+                                        comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                    }
+                                    else
+                                    {
+                                        comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                    }
+                                    comm3.Parameters.AddWithValue("@name", staff);
+                                    comm3.Parameters.AddWithValue("@section", section);
+                                    comm3.Parameters.AddWithValue("@qID", questionID);
+                                    SqlDataReader dr3 = comm3.ExecuteReader();
+                                    while (dr3.Read())
+                                    {
+                                        string stddev = dr3["StdDeviation"].ToString();
+
+                                        for (int i = 0; i < Chart1.Series[0].Points.Count; i++)
+                                        {
+                                            Chart1.Series[0].Points[i].Label = "A: #VALY";
+                                        }
+
+                                    }
+                                    dr3.Close();
+                                }
+                                catch (SqlException)
+                                {
+                                }
+                                finally
+                                {
+                                    myconn3.Close();
+                                }
                             }
                             dr2.Close();
                         }
@@ -201,7 +259,6 @@ namespace _360_Staff_Survey_Web
             else if (question == "All Questions" && section == "All Sections" && enddate != "<----Please select one---->")
             {
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -209,7 +266,6 @@ namespace _360_Staff_Survey_Web
                     myconn.ConnectionString = connectionString;
                     myconn.Open();
                     comm.Connection = myconn;
-
                     //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
                     staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
                     if (true)
@@ -236,7 +292,6 @@ namespace _360_Staff_Survey_Web
                             string staffname = dr["Name"].ToString();
 
                             SqlConnection myconn2 = null;
-                            int count2 = 0;
                             try
                             {
                                 myconn2 = new SqlConnection();
@@ -244,9 +299,8 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '"+enddate+"%'";
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                                 comm2.Parameters.AddWithValue("@name", staffname);
-                                //comm2.Parameters.AddWithValue("@enddate", enddate);
                                 SqlDataReader dr2 = comm2.ExecuteReader();
                                 while (dr2.Read())
                                 {
@@ -254,32 +308,70 @@ namespace _360_Staff_Survey_Web
                                     graphwidth.Add(staffname);
 
                                     Chart1.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.Visible = true;
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
+
+                                    SqlConnection myconn3 = null;
+                                    try
+                                    {
+                                        myconn3 = new SqlConnection();
+                                        SqlCommand comm3 = new SqlCommand();
+                                        myconn3.ConnectionString = connectionString;
+                                        myconn3.Open();
+                                        comm3.Connection = myconn3;
+                                        if (questionID == 0)
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        else
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        comm3.Parameters.AddWithValue("@name", staff);
+                                        comm3.Parameters.AddWithValue("@section", section);
+                                        comm3.Parameters.AddWithValue("@qID", questionID);
+                                        SqlDataReader dr3 = comm3.ExecuteReader();
+                                        while (dr3.Read())
+                                        {
+                                            string stddev = dr3["StdDeviation"].ToString();
+                                            for (int i = 0; i < Chart1.Series[0].Points.Count; i++)
+                                            {
+                                                Chart1.Series[0].Points[i].Label = "A: #VALY";
+                                            }
+
+                                        }
+                                        dr3.Close();
+                                    }
+                                    catch (SqlException)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        myconn3.Close();
+                                    }
                                 }
                                 dr2.Close();
                             }
                             catch (SqlException)
                             {
-
                             }
-
                             finally
                             {
                                 myconn2.Close();
                             }
                         }
-
                         dr.Close();
                     }
                 }
                 catch (SqlException)
                 {
-
                 }
-
                 finally
                 {
                     myconn.Close();
@@ -288,7 +380,6 @@ namespace _360_Staff_Survey_Web
             else if (question == "All Questions" && section != "All Sections" && enddate != "<----Please select one---->")
             {
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -297,7 +388,6 @@ namespace _360_Staff_Survey_Web
                     myconn.Open();
                     comm.Connection = myconn;
                     //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') WHERE StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
-
                     staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
                     if (true)
                     {
@@ -307,12 +397,10 @@ namespace _360_Staff_Survey_Web
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%')";
                         }
-
                         else if (role == "Officer" && function == "Manager")
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD' AND StaffInfo.Functions != 'Manager'";
                         }
-
                         else if (role == "Officer")
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' OR StaffInfo.Section LIKE @section+'%') AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
@@ -322,9 +410,7 @@ namespace _360_Staff_Survey_Web
                         while (dr.Read())
                         {
                             string staffname = dr["Name"].ToString();
-
                             SqlConnection myconn2 = null;
-                            int count2 = 0;
                             try
                             {
                                 myconn2 = new SqlConnection();
@@ -332,7 +418,7 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT AVG(StaffAppraisal.AppraisalResult) AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name";
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                                 comm2.Parameters.AddWithValue("@name", staffname);
 
                                 SqlDataReader dr2 = comm2.ExecuteReader();
@@ -342,16 +428,58 @@ namespace _360_Staff_Survey_Web
 
                                     graphwidth.Add(staffname);
                                     Chart1.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.Visible = true;
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
+
+                                    SqlConnection myconn3 = null;
+                                    try
+                                    {
+                                        myconn3 = new SqlConnection();
+                                        SqlCommand comm3 = new SqlCommand();
+                                        myconn3.ConnectionString = connectionString;
+                                        myconn3.Open();
+                                        comm3.Connection = myconn3;
+                                        if (questionID == 0)
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        else
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        comm3.Parameters.AddWithValue("@name", staff);
+                                        comm3.Parameters.AddWithValue("@section", section);
+                                        comm3.Parameters.AddWithValue("@qID", questionID);
+                                        SqlDataReader dr3 = comm3.ExecuteReader();
+                                        while (dr3.Read())
+                                        {
+                                            string stddev = dr3["StdDeviation"].ToString();
+                                            for (int i = 0; i < Chart1.Series[0].Points.Count; i++)
+                                            {
+                                                Chart1.Series[0].Points[i].Label = "A: #VALY";
+                                            }
+
+                                        }
+                                        dr3.Close();
+                                    }
+                                    catch (SqlException)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        myconn3.Close();
+                                    }
                                 }
                                 dr2.Close();
                             }
                             catch (SqlException)
                             {
-
                             }
                             finally
                             {
@@ -363,7 +491,6 @@ namespace _360_Staff_Survey_Web
                 }
                 catch (SqlException)
                 {
-
                 }
                 finally
                 {
@@ -375,7 +502,6 @@ namespace _360_Staff_Survey_Web
                 int qid = dbmanager.GetQuestionIDFromQuestion(question);
 
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -385,7 +511,6 @@ namespace _360_Staff_Survey_Web
                     comm.Connection = myconn;
                     //comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
                     staffinfo si = dbmanager.GetStaffDetailsViaUid(Session["LoginName"].ToString());
-
                     if (true)
                     {
                         string role = si.Role;
@@ -395,12 +520,10 @@ namespace _360_Staff_Survey_Web
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid";
                         }
-
                         else if (role == "Officer" && function == "Manager")
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD' AND StaffInfo.Functions != 'Manager'";
                         }
-
                         else if (role == "Officer")
                         {
                             comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Functions != 'Director' AND StaffInfo.Functions != 'AD' AND StaffInfo.Functions != 'DD'";
@@ -413,7 +536,6 @@ namespace _360_Staff_Survey_Web
                             string staffname = dr["Name"].ToString();
 
                             SqlConnection myconn2 = null;
-                            int count2 = 0;
                             try
                             {
                                 myconn2 = new SqlConnection();
@@ -421,11 +543,9 @@ namespace _360_Staff_Survey_Web
                                 myconn2.ConnectionString = connectionString;
                                 myconn2.Open();
                                 comm2.Connection = myconn2;
-                                comm2.CommandText = "SELECT AVG(StaffAppraisal.AppraisalResult) AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name";
-
+                                comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                                 comm2.Parameters.AddWithValue("@qid", qid);
                                 comm2.Parameters.AddWithValue("@name", staffname);
-
                                 SqlDataReader dr2 = comm2.ExecuteReader();
                                 while (dr2.Read())
                                 {
@@ -434,18 +554,60 @@ namespace _360_Staff_Survey_Web
                                     graphwidth.Add(staffname);
 
                                     Chart1.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.Visible = true;
+                                    
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
+                                    Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                                    Chart2.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart2.Visible = true;
+
+                                    SqlConnection myconn3 = null;
+                                    try
+                                    {
+                                        myconn3 = new SqlConnection();
+                                        SqlCommand comm3 = new SqlCommand();
+                                        myconn3.ConnectionString = connectionString;
+                                        myconn3.Open();
+                                        comm3.Connection = myconn3;
+                                        if (questionID == 0)
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        else
+                                        {
+                                            comm3.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDateLIKE '" + enddate + "%'";
+                                        }
+                                        comm3.Parameters.AddWithValue("@name", staff);
+                                        comm3.Parameters.AddWithValue("@section", section);
+                                        comm3.Parameters.AddWithValue("@qID", questionID);
+                                        SqlDataReader dr3 = comm3.ExecuteReader();
+                                        while (dr3.Read())
+                                        {
+                                            string stddev = dr3["StdDeviation"].ToString();
+                                            for (int i = 0; i < Chart1.Series[0].Points.Count; i++)
+                                            {
+                                                Chart1.Series[0].Points[i].Label = "A: #VALY";
+                                            }
+                                            
+                                        }
+                                        dr3.Close();
+                                    }
+                                    catch (SqlException)
+                                    {
+                                    }
+                                    finally
+                                    {
+                                        myconn3.Close();
+                                    }
                                 }
                                 dr2.Close();
                             }
                             catch (SqlException)
                             {
-
                             }
-
                             finally
                             {
                                 myconn2.Close();
@@ -463,7 +625,7 @@ namespace _360_Staff_Survey_Web
                 }
             }
             // chart.Series[0].Points.DataBindXY(xAxis, yAxis);
-            // where xAxis is List<String> and yAxis is List<Double>
+            // where xAxis is List<String> and yAxis is List<Double>                       
             int graphwidthx = graphwidth.Count * 150;
 
             Chart1.Width = graphwidthx;
@@ -471,6 +633,7 @@ namespace _360_Staff_Survey_Web
             Chart1.ChartAreas[0].AxisY.Title = "Average Score Recorded";
             Chart1.ChartAreas[0].AxisX.Title = "Name of Staffs";
             Chart1.ChartAreas[0].AxisX.Interval = 1;
+
 
             ArrayList listofSD = new ArrayList();
             ArrayList listofdates = dbmanager.GetListofDatesViaSection(section);
@@ -493,51 +656,41 @@ namespace _360_Staff_Survey_Web
             }
             //Label3.Visible = true;
 
+
             Chart2.Width = graphwidthx;
             Chart2.Height = 600;
             Chart2.ChartAreas[0].AxisY.Title = "Average Score Recorded";
             Chart2.ChartAreas[0].AxisX.Title = "Name of Staffs";
             Chart2.ChartAreas[0].AxisX.Interval = 1;
-            Chart2.Series[0].Label = "#VALY" + "\nS: " + "\nM: ";
-            //Label4.Visible = true;
+            Chart2.Series[0].Label = "A: #VALY";
 
             if (CheckBox1.Checked)
             {
                 if (CheckBox2.Checked)
                 {
                     Chart1.Visible = true;
-                    //Label3.Visible = true;
-                    //Label4.Visible = true;
                     Chart2.Visible = true;
                 }
                 else
                 {
                     Chart1.Visible = true;
-                    //Label3.Visible = false;
-                    //Label4.Visible = true;
                     Chart2.Visible = false;
                 }
             }
             else if (CheckBox2.Checked)
             {
                 Chart1.Visible = false;
-                //Label3.Visible = true;
-                //Label4.Visible = false;
                 Chart2.Visible = true;
             }
             else
             {
                 CheckBox1.Checked = true;
                 Chart1.Visible = true;
-                //Label3.Visible = false;
-                //Label4.Visible = true;
                 Chart2.Visible = false;
             }
             if (question == "<----Please select one---->" || section == "<----Please select one---->")
             {
                 Chart1.Visible = false;
-                //Label3.Visible = false;
-                //Label4.Visible = false;
                 Chart2.Visible = false;
             }
         }
@@ -555,7 +708,6 @@ namespace _360_Staff_Survey_Web
                 int qid = dbmanager.GetQuestionIDFromQuestion(question);
 
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -574,7 +726,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -582,10 +733,9 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@qid", qid);
                             comm2.Parameters.AddWithValue("@name", staffname);
-                            comm2.Parameters.AddWithValue("@enddate", enddate);
 
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())
@@ -600,7 +750,6 @@ namespace _360_Staff_Survey_Web
                         catch (SqlException)
                         {
                         }
-
                         finally
                         {
                             myconn2.Close();
@@ -619,7 +768,6 @@ namespace _360_Staff_Survey_Web
             else if (question == "All Questions" && section == "All Sections" && enddate != "<----Please select one---->")
             {
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -635,7 +783,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -643,7 +790,7 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@name", staffname);
 
                             SqlDataReader dr2 = comm2.ExecuteReader();
@@ -677,7 +824,6 @@ namespace _360_Staff_Survey_Web
             else if (question == "All Questions" && section != "All Sections" && enddate != "<----Please select one---->")
             {
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -695,7 +841,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -703,9 +848,8 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@name", staffname);
-                            comm2.Parameters.AddWithValue("@enddate", enddate);
 
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())
@@ -739,7 +883,6 @@ namespace _360_Staff_Survey_Web
                 int qid = dbmanager.GetQuestionIDFromQuestion(question);
 
                 SqlConnection myconn = null;
-                int count = 0;
                 try
                 {
                     myconn = new SqlConnection();
@@ -756,7 +899,6 @@ namespace _360_Staff_Survey_Web
                         string staffname = dr["Name"].ToString();
 
                         SqlConnection myconn2 = null;
-                        int count2 = 0;
                         try
                         {
                             myconn2 = new SqlConnection();
@@ -764,10 +906,9 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@qid", qid);
                             comm2.Parameters.AddWithValue("@name", staffname);
-                            comm2.Parameters.AddWithValue("@enddate", enddate);
 
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())

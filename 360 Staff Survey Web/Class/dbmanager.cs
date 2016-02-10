@@ -1280,11 +1280,11 @@ namespace _360_Staff_Survey_Web.Class
                 comm.Connection = myconn;
                 if (questionID == 0)
                 {
-                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDate=@date ";
+                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.SystemEndDate=@date";
                 }
                 else
                 {
-                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.AppraisalQuestionID=@quesid and stfp.SystemEndDate=@date ";
+                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDate=@date";
                 }
                 comm.Parameters.AddWithValue("@name", name);
                 comm.Parameters.AddWithValue("@section", section);
@@ -1728,7 +1728,6 @@ namespace _360_Staff_Survey_Web.Class
             }
             return staff;
         }
-
         public static AutoEmail GetAutoEmailCountandDate()
         {
             SqlConnection myconn = null;
@@ -1881,7 +1880,14 @@ namespace _360_Staff_Survey_Web.Class
                 myconn.ConnectionString = connectionString;
                 myconn.Open();
                 comm.Connection = myconn;
-                comm.CommandText = "select AVG(AppraisalResult) as TOTAL from StaffAppraisal where AppraisalStaffUserID=@uid and SystemEndDate=@dates and AppraisalQuestionID=@qid  and AppraisalResult != 0.0";
+                if (qid == 0)
+                {
+                    comm.CommandText = "select AVG(AppraisalResult) as TOTAL from StaffAppraisal where AppraisalStaffUserID=@uid and SystemEndDate=@dates and AppraisalResult != 0.0";
+                }
+                else
+                {
+                    comm.CommandText = "select AVG(AppraisalResult) as TOTAL from StaffAppraisal where AppraisalStaffUserID=@uid and SystemEndDate=@dates and AppraisalQuestionID=@qid and AppraisalResult != 0.0";
+                }           
                 comm.Parameters.AddWithValue("@uid", uid);
                 comm.Parameters.AddWithValue("@dates", dates);
                 comm.Parameters.AddWithValue("@qid", qid);
@@ -4663,7 +4669,7 @@ namespace _360_Staff_Survey_Web.Class
             ArrayList listofstaff = new ArrayList();
             try
             {
-                if (stafff.Role == "Director")
+                if (stafff.Role == "Director" || stafff.Role == "Admin")
                 {
                     myconn = new SqlConnection();
                     SqlCommand comm = new SqlCommand();

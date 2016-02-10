@@ -31,7 +31,6 @@ namespace _360_Staff_Survey_Web
                 historychartbarLink.Style.Add("color", "Purple");
             }
         }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.IsPostBack)
@@ -87,7 +86,6 @@ namespace _360_Staff_Survey_Web
                 }
             }
         }
-
         protected void BindDropDownList()
         {
             if (Session["ListofSectionOp"] != null && Session["ListofFunctionOp"] != null)
@@ -96,7 +94,6 @@ namespace _360_Staff_Survey_Web
                 ArrayList listsection = RemoveDups(listofsection);
                 ArrayList listoffunction = (ArrayList)Session["ListofFunctionOp"];
                 ArrayList listfunction = RemoveDups(listoffunction);
-
 
                 if (listsection.Count != 0)
                 {
@@ -116,17 +113,14 @@ namespace _360_Staff_Survey_Web
                 }
             }
         }
-
         protected void exportWord_Click(object sender, ImageClickEventArgs e)
         {
             ExportWord(ViewAllHistory);
         }
-
         public override void VerifyRenderingInServerForm(Control control)
         {
             /* Verifies that the control is rendered */
         }
-
         private void MessageBoxShow(string message)
         {
             string strScript = "<script>";
@@ -134,7 +128,6 @@ namespace _360_Staff_Survey_Web
             strScript += "</script>";
             this.ClientScript.RegisterStartupScript(this.GetType(), "Startup", strScript);
         }
-
         private void MessageBoxShowWithRedirect(string message)
         {
             string strScript = "<script>";
@@ -143,7 +136,6 @@ namespace _360_Staff_Survey_Web
             strScript += "</script>";
             this.ClientScript.RegisterStartupScript(this.GetType(), "Startup", strScript);
         }
-
         protected void ExportExcel(GridView gridView)
         {
             /*string username = Session["Name"].ToString();
@@ -172,27 +164,22 @@ namespace _360_Staff_Survey_Web
                 PrepareControlForExport(gridView.HeaderRow);
                 table.Rows.Add(gridView.HeaderRow);
             }
-
             //  add each of the data rows to the table
-
             foreach (GridViewRow row in gridView.Rows)
             {
                 PrepareControlForExport(row);
                 table.Rows.Add(row);
             }
-
             //  add the footer row to the table
             if (gridView.FooterRow != null)
             {
                 PrepareControlForExport(gridView.FooterRow);
                 table.Rows.Add(gridView.FooterRow);
             }
-
             for (int i = 0; i <= gridView.Rows.Count; i++)
             {
                 table.Rows[i].Cells[0].Visible = false;
             }
-
             using (StringWriter stringWriter = new StringWriter())
             {
                 using (HtmlTextWriter htmlWriter = new HtmlTextWriter(stringWriter))
@@ -206,7 +193,6 @@ namespace _360_Staff_Survey_Web
                 }
             }
         }
-
         protected void ExportWord(GridView gridView)
         {
             /*string username = Session["Name"].ToString();
@@ -214,7 +200,6 @@ namespace _360_Staff_Survey_Web
             {
                 username = username.Replace(" ", "_");
             }**/
-
             HttpContext.Current.Response.Clear();
             System.Web.HttpContext curContext = System.Web.HttpContext.Current;
             curContext.Response.AddHeader("content-disposition", "attachment; filename=" + System.Web.HttpUtility.UrlEncode("StaffAppraisal.doc"));
@@ -234,15 +219,12 @@ namespace _360_Staff_Survey_Web
                 gridView.HeaderRow.Style.Add("background", "black");
                 table.Rows.Add(gridView.HeaderRow);
             }
-
             //  add each of the data rows to the table
-
             foreach (GridViewRow row in gridView.Rows)
             {
                 PrepareControlForExport(row);
                 table.Rows.Add(row);
             }
-
             //  add the footer row to the table
             if (gridView.FooterRow != null)
             {
@@ -268,7 +250,6 @@ namespace _360_Staff_Survey_Web
                 }
             }
         }
-
         protected void BindHistoryReport()
         {
             ArrayList listofavgrating = new ArrayList();
@@ -316,7 +297,6 @@ namespace _360_Staff_Survey_Web
                 Response.Redirect("default.aspx");
             }
         }
-
         protected void BindHistoryReportAll()
         {
             ArrayList listofsection = new ArrayList();
@@ -377,7 +357,6 @@ namespace _360_Staff_Survey_Web
                 Response.Redirect("default.aspx");
             }
         }
-
         protected void BindHistoryReportViaSectionIndividual(string section)
         {
             ArrayList listofavgrating = new ArrayList();
@@ -437,7 +416,6 @@ namespace _360_Staff_Survey_Web
                 MessageBoxShow("No record found for this section.");
             }
         }
-
         protected void BindHistoryReportViaSection(string section)
         {
             string[] finalsec = section.Split(',');
@@ -1291,14 +1269,9 @@ namespace _360_Staff_Survey_Web
                 }
             }
         }
-
         //protected double GetAverageRating(string uid, int qid, int count, DateTime date)
         //{
         //    double averagefinal = 0.00;
-
-
-
-
         //    //try
         //    //{
         //    //    ArrayList listofchoice = dbmanager.GetAllChoice();
@@ -1327,10 +1300,6 @@ namespace _360_Staff_Survey_Web
         //    //{
         //    //    return averagefinal;
         //    //}
-
-
-
-
         //}
         protected double GetStandardDeviation(string uid, int qid, DateTime date)
         {
@@ -1382,19 +1351,16 @@ namespace _360_Staff_Survey_Web
                 }
                 double standarddevs = standarddev;
 
-                standarddeviationfinal = (Math.Round(Math.Sqrt(standarddevs), 1));
+                standarddeviationfinal = (Math.Round(Math.Sqrt(standarddevs), 2));
 
                 //standarddeviationfinal = (Math.Round(standarddeviationfinal, 1));
                 return standarddeviationfinal;
-
-
             }
             catch
             {
                 return standarddeviationfinal;
             }
         }
-
         protected double GetMedian(string uid, int qid, DateTime date)
         {
             double standarddeviationfinal = 0.00;
@@ -1413,9 +1379,8 @@ namespace _360_Staff_Survey_Web
                 double std = 0.00;
 
                 ArrayList standarddevlist = new ArrayList();
-
-
                 ArrayList medians = new ArrayList();
+
                 int count = 0;
                 foreach (string rate in listofchoice)
                 {
@@ -1425,13 +1390,11 @@ namespace _360_Staff_Survey_Web
                         double apprate = dbmanager.GetCountYourAppraisalViaRate(uid, rate, qid, date);
                         count = Convert.ToInt32(apprate);
                         if (apprate > 0.0)
-                        {
-                            
+                        {                        
                             for (int i = 1; i <= Convert.ToInt32(apprate); i++)
                             {
                                 if (count % 2 != 0)
                                 {
-
                                     final = rating;
                                     position = ((count + 1) / 2) - 1;
                                     medians.Add(final);
@@ -1442,36 +1405,26 @@ namespace _360_Staff_Survey_Web
                                     position = (count / 2) - 1;
                                     pos2 = (((count / 2) + 1)) - 1;
                                     medians.Add(final);
-
                                 }
                             }
-
-
                         }
                     }
                 }
                 if (count % 2 != 0)
                 {
-
                     median = (Math.Round(Convert.ToDouble(medians[position].ToString()), 1));
                 }
                 else if (count % 2 == 0)
                 {
                     median = (Math.Round((Convert.ToDouble(medians[position].ToString()) + Convert.ToDouble(medians[pos2].ToString())) / 2, 1));
-
-
                 }
-
                 return median;
-
-
             }
             catch
             {
                 return median;
             }
         }
-
         protected void ViewIndividualBothRateAndComment(string uid, DateTime date, int questionID, string questionDetails)
         {
             lblYourStat.Text = "";
@@ -1685,7 +1638,6 @@ namespace _360_Staff_Survey_Web
                     if (qn.QuestionDetails == questionDetails)
                     {
                         //int countappqid = dbmanager.GetCountYourAppraisalViaQidDate(uid, qn.QuestionID, date);
-
                         if (qncount2 > 1)
                         {
                             content2 += "<br>";
@@ -1715,7 +1667,7 @@ namespace _360_Staff_Survey_Web
 
                         content2 += "</td>";
                         content2 += "<td style='border-color:#000080' width='100'>";
-                        content2 += "&nbsp;&nbsp;&nbsp;&nbsp;Median Grade: " + median;
+                        content2 += "&nbsp;&nbsp;&nbsp;&nbsp;Median of grade: " + median;
                         content2 += "</td>";
                         //content2 += "<br>";
                         //content2 += "<br>";
@@ -1787,7 +1739,6 @@ namespace _360_Staff_Survey_Web
                                 }
                             }
                         }
-
                         foreach (string function in listoffunction)
                         {
                             ArrayList totalappraisal = dbmanager.GetCountUserIDAppraisalFunction(uid, function, qn.QuestionID, date);
@@ -1841,7 +1792,6 @@ namespace _360_Staff_Survey_Web
             }
             #endregion
         }
-
         protected void ViewIndividualComment(string uid, DateTime date, int questionId, string questionDetails)
         {
             #region view individual with comment
@@ -2173,7 +2123,6 @@ namespace _360_Staff_Survey_Web
 
             #endregion
         }
-
         protected void IndividualBack_Click(object sender, EventArgs e)
         {
             IndividualBack.Style.Add("color", "Purple");
@@ -2192,7 +2141,6 @@ namespace _360_Staff_Survey_Web
                 Response.Redirect("default.aspx");
             }
         }
-
         protected void wordExportIndividual_Click(object sender, ImageClickEventArgs e)
         {
             try
@@ -2216,7 +2164,6 @@ namespace _360_Staff_Survey_Web
                 MessageBoxShow(ex.Message.ToString());
             }
         }
-
         private static void PrepareControlForExport(Control control)
         {
             for (int i = 0; i < control.Controls.Count; i++)
@@ -2271,7 +2218,6 @@ namespace _360_Staff_Survey_Web
                 }
             }
         }
-
         public ArrayList RemoveDups(ArrayList items)
         {
             ArrayList noDups = new ArrayList();
@@ -2286,7 +2232,6 @@ namespace _360_Staff_Survey_Web
             noDups.Sort();
             return noDups;
         }
-
         protected void SearchBySectionFunction_Click(object sender, EventArgs e)
         {
             Session["SearchClick"] = null;
@@ -2378,13 +2323,11 @@ namespace _360_Staff_Survey_Web
                 }
             }
         }
-
         public static iTextSharp.text.Document document;
         protected void Exportchart(ArrayList chart)
         {
             string uid = Session["UserID"].ToString();
             MemoryStream msReport = new MemoryStream();
-
             try
             {
                 document = new iTextSharp.text.Document(iTextSharp.text.PageSize.LETTER, 72, 72, 82, 72);
@@ -2428,7 +2371,6 @@ namespace _360_Staff_Survey_Web
                 throw new Exception("Error occured: " + ex);
             }
         }
-
         protected ArrayList GetChartResult(string uid)
         {
             ArrayList listofresult = new ArrayList();
@@ -2455,7 +2397,6 @@ namespace _360_Staff_Survey_Web
             }
             return listofresult;
         }
-
         protected ArrayList GetChartResultViaQuestion(string uid, int questionID)
         {
             ArrayList listofresult = new ArrayList();
@@ -2478,7 +2419,6 @@ namespace _360_Staff_Survey_Web
             }
             return listofresult;
         }
-
         protected void historylineLink_Click(object sender, EventArgs e)
         {
             historylineLink.Style.Add("color", "Purple");
@@ -2587,7 +2527,6 @@ namespace _360_Staff_Survey_Web
                 MessageBoxShow("Line chart not obvious for viewing, please try again later!");
             }
         }
-
         protected void historychartbarLink_Click(object sender, EventArgs e)
         {
             historychartbarLink.Style.Add("color", "Purple");
@@ -2685,12 +2624,10 @@ namespace _360_Staff_Survey_Web
             #endregion
             Exportchart(chartArray);
         }
-
         protected void exportExcel_Click(object sender, ImageClickEventArgs e)
         {
             ExportExcel(ViewAllHistory);
         }
-
         protected void ViewOverallBtn_Click(object sender, EventArgs e)
         {
             if (Session["AverageGrading"] == null)
@@ -2739,10 +2676,8 @@ namespace _360_Staff_Survey_Web
                 }
             }
         }
-
         protected void ViewAllHistory_SelectedIndexChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

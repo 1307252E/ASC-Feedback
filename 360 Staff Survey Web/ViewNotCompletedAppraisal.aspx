@@ -30,7 +30,5 @@
     <div style="padding-left: 10px">
         <asp:ImageButton ID="exportWord" runat="server" AlternateText="Export to word" ImageUrl="~/Image/WORD.png" OnClick="exportWord_Click" /></div>
     <asp:Label ID="lblStaffSummary" runat="server" CssClass="label"></asp:Label>
-    <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <asp:Button ID="emailNotice" runat="server" BorderColor="#FFFFCC" CssClass="label" Font-Names="Iskoola Pota" Font-Size="Large" OnClick="emailNotice_Click" Text="Send email to staffs who has not done survey" />
+    <asp:Button ID="emailNotice" runat="server" BorderColor="#FFFFCC" CssClass="label" Font-Names="Arial" Font-Size="Large" OnClick="emailNotice_Click" Text="Send survey reminder e-mail"/>
 </asp:Content>

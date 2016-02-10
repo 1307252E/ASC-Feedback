@@ -39,8 +39,6 @@
     <br />
     <br />
     <br />
-    <br />
-    <br />
     <asp:Chart ID="Chart1" runat="server" Visible="False">
         <Series>
             <asp:Series ChartType="Line" Name="Series1">
@@ -58,10 +56,6 @@
     <br />
     <br />
     <br />
-    <br />
-    <br />
-    <br />
-
     <br />
     <asp:Chart ID="Chart2" runat="server" Visible="False">
         <Series>
