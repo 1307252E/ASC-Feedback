@@ -460,19 +460,7 @@ namespace _360_Staff_Survey_Web
                 }
             }
             // chart.Series[0].Points.DataBindXY(xAxis, yAxis);
-            // where xAxis is List<String> and yAxis is List<Double>
-            int qn = ddlQuestions.SelectedIndex;
-            string sctn = ddlSections.SelectedValue;
-
-            ArrayList namelist = dbmanager.GetAllNames();
-            
-
-            foreach (String stfname in namelist)
-            {
-                
-            }
-            
-
+            // where xAxis is List<String> and yAxis is List<Double>                       
             int graphwidthx = graphwidth.Count * 150;
 
             Chart1.Width = graphwidthx;

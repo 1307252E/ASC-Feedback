@@ -4669,7 +4669,7 @@ namespace _360_Staff_Survey_Web.Class
             ArrayList listofstaff = new ArrayList();
             try
             {
-                if (stafff.Role == "Director")
+                if (stafff.Role == "Director" || stafff.Role == "Admin")
                 {
                     myconn = new SqlConnection();
                     SqlCommand comm = new SqlCommand();
