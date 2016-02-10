@@ -144,10 +144,10 @@ namespace _360_Staff_Survey_Web
                     myconn.ConnectionString = connectionString;
                     myconn.Open();
                     comm.Connection = myconn;
-                    comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' AND StaffAppraisal.SystemEndDate = @enddate)";
+                    comm.CommandText = "SELECT DISTINCT StaffInfo.Name FROM StaffInfo INNER JOIN StaffAppraisal ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND (StaffInfo.Section = @section OR StaffInfo.Section LIKE'%'+ @section OR StaffInfo.Section LIKE'%'+ @section+'%' AND StaffAppraisal.SystemEndDate LIKE '" + enddate + "%')";
                     comm.Parameters.AddWithValue("@qid", qid);
                     comm.Parameters.AddWithValue("@section", section);
-                    comm.Parameters.AddWithValue("@enddate", enddate);
+                    //comm.Parameters.AddWithValue("@enddate", enddate);
                     SqlDataReader dr = comm.ExecuteReader();
                     while (dr.Read())
                     {
@@ -162,10 +162,10 @@ namespace _360_Staff_Survey_Web
                             myconn2.ConnectionString = connectionString;
                             myconn2.Open();
                             comm2.Connection = myconn2;
-                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate=@enddate";
+                            comm2.CommandText = "SELECT FORMAT(AVG(StaffAppraisal.AppraisalResult), 'N1') AS AvgResult FROM StaffAppraisal INNER JOIN StaffInfo ON StaffAppraisal.AppraisalStaffUserID = StaffInfo.UserID WHERE StaffAppraisal.AppraisalQuestionID = @qid AND StaffInfo.Name = @name and StaffAppraisal.SystemEndDate LIKE '" + enddate + "%'";
                             comm2.Parameters.AddWithValue("@qid", qid);
                             comm2.Parameters.AddWithValue("@name", staffname);
-                            comm2.Parameters.AddWithValue("@enddate", enddate);
+                            //comm2.Parameters.AddWithValue("@enddate", enddate);
                             SqlDataReader dr2 = comm2.ExecuteReader();
                             while (dr2.Read())
                             {
