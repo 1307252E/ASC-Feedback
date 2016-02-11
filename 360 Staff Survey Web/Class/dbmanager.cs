@@ -1284,7 +1284,7 @@ namespace _360_Staff_Survey_Web.Class
                 }
                 else
                 {
-                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name s.Section=@section and stfp.AppraisalQuestionID=@qID and stfp.SystemEndDate=@date";
+                    comm.CommandText = "select STDEV(stfp.AppraisalResult)as TOTAL from StaffAppraisal stfp, StaffInfo s where stfp.AppraisalStaffUserID=s.UserID and s.Name=@name and s.Section=@section and stfp.AppraisalQuestionID=@quesID and stfp.SystemEndDate=@date";
                 }
                 comm.Parameters.AddWithValue("@name", name);
                 comm.Parameters.AddWithValue("@section", section);
@@ -5144,7 +5144,7 @@ namespace _360_Staff_Survey_Web.Class
             }
             return listofFunction;
         }
-        public static ArrayList GetAllNames()
+        public static ArrayList GetAllNames(string section)
         {
             SqlConnection myconn = null;
             ArrayList listofNames = new ArrayList();
@@ -5155,8 +5155,8 @@ namespace _360_Staff_Survey_Web.Class
                 myconn.ConnectionString = connectionString;
                 myconn.Open();
                 comm.Connection = myconn;
-                comm.CommandText = "SELECT Name from dbo.StaffInfo";
-
+                comm.CommandText = "SELECT Name from dbo.StaffInfo WHERE section=@section";
+                comm.Parameters.AddWithValue("@section", section);
                 SqlDataReader dr = comm.ExecuteReader();
                 while (dr.Read())
                 {

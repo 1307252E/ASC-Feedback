@@ -131,7 +131,7 @@ namespace _360_Staff_Survey_Web
 
             ArrayList results = new ArrayList();
             ArrayList appraisalID = new ArrayList();
-            ArrayList names = dbmanager.GetAllNames();
+            ArrayList names = dbmanager.GetAllNames(section);
 
             populateChartForStaff(name, section, question);
         }
@@ -139,7 +139,6 @@ namespace _360_Staff_Survey_Web
         {
             string question = ddlQuestions.SelectedValue;
             string enddate = ddlPeriod.SelectedValue;
-            ArrayList names = dbmanager.GetAllNames();
 
             ArrayList graphwidth = new ArrayList();
 
@@ -557,7 +556,7 @@ namespace _360_Staff_Survey_Web
                                     Chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
                                     Chart1.Visible = true;
-                                    
+
 
                                     Chart2.Series[0].Points.AddXY(staffname, avgresult);
                                     Chart2.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
@@ -591,7 +590,7 @@ namespace _360_Staff_Survey_Web
                                             {
                                                 Chart1.Series[0].Points[i].Label = "A: #VALY";
                                             }
-                                            
+
                                         }
                                         dr3.Close();
                                     }
@@ -633,29 +632,7 @@ namespace _360_Staff_Survey_Web
             Chart1.ChartAreas[0].AxisY.Title = "Average Score Recorded";
             Chart1.ChartAreas[0].AxisX.Title = "Name of Staffs";
             Chart1.ChartAreas[0].AxisX.Interval = 1;
-
-
-            ArrayList listofSD = new ArrayList();
-            ArrayList listofdates = dbmanager.GetListofDatesViaSection(section);
-            int questionid = dbmanager.GetQuestionIDFromQuestion(question);
-
-            foreach (string name in names)
-            {
-                foreach (DateTime date in listofdates)
-                {
-                    listofSD.Add(dbmanager.GetIndividualStdDev(name, section, questionid, date));
-                }
-            }
-            for (int i = 0; i < Chart1.Series.Count; i++)
-            {
-                for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
-                {
-                    // Chart1.Series[i].Points[k].Label = "A: " + "#VALY\n" + " S: " + Convert.ToDouble(listofSD[k]).ToString("F") + "\n";
-                    Chart1.Series[i].Points[k].Label = "A: " + "#VALY" + "\nS: " + "\nM: ";
-                }
-            }
-            //Label3.Visible = true;
-
+            Chart1.Series[0].Label = "A: #VALY";
 
             Chart2.Width = graphwidthx;
             Chart2.Height = 600;
