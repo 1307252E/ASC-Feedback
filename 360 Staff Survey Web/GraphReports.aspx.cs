@@ -89,7 +89,7 @@ namespace _360_Staff_Survey_Web
                 ddlQuestions.DataSource = questionall;
                 ddlQuestions.DataBind();
             }
-            if (ddlSections.Items.Count == 0)
+            if (ddlSections.Items.Count == 0 && Session["Role"].ToString().Equals("Director"))
             {
                 string uid = Session["UserID"].ToString();
                 staffinfo stfinfo = dbmanager.GetStaffDetailsViaUid(uid);
@@ -103,9 +103,31 @@ namespace _360_Staff_Survey_Web
                         listofsection.Add(sect);
                     }
                 }
-                listofsection.Insert(0, "<----Please select one---->");
-                listofsection.Insert(1, "All Sections");
-                ddlSections.DataSource = listofsection;
+                ArrayList listsection = RemoveDups(listofsection);
+
+                listsection.Insert(0, "<----Please select one---->");
+                listsection.Insert(1, "All Sections");
+                ddlSections.DataSource = listsection;
+                ddlSections.DataBind();
+            }
+            else if (ddlSections.Items.Count == 0 && Session["Role"].ToString().Equals("Officer"))
+            {
+                string uid = Session["UserID"].ToString();
+                staffinfo stfinfo = dbmanager.GetStaffDetailsViaUid(uid);
+
+                ArrayList listofsection = new ArrayList();
+                string[] arraysection = stfinfo.Section.Split(',');
+                if (arraysection.LongLength > 0)
+                {
+                    foreach (string sect in arraysection)
+                    {
+                        listofsection.Add(sect);
+                    }
+                }
+                ArrayList listsection = RemoveDups(listofsection);
+
+                listsection.Insert(0, "<----Please select one---->");
+                ddlSections.DataSource = listsection;
                 ddlSections.DataBind();
             }
             if (ddlPeriod.Items.Count == 0)
@@ -121,6 +143,20 @@ namespace _360_Staff_Survey_Web
                 ddlPeriod.DataSource = shortdate;
                 ddlPeriod.DataBind();
             }
+        }
+        public ArrayList RemoveDups(ArrayList items)
+        {
+            ArrayList noDups = new ArrayList();
+
+            foreach (string strItem in items)
+            {
+                if (!noDups.Contains(strItem.Trim()))
+                {
+                    noDups.Add(strItem.Trim());
+                }
+            }
+            noDups.Sort();
+            return noDups;
         }
         protected void btnView_Click(object sender, EventArgs e)
         {
