@@ -546,7 +546,7 @@ namespace _360_Staff_Survey_Web
 
                 if (listofhistorydates.Count != 0 && listofquestion.Count != 0 && count > 0 && stf.Section.Contains(section))
                 {
-                    if (userRole == "Officer" || userRole == "Director")
+                    if (userRole == "Officer" || userRole == "ss")
                     {
                         string[] listofsection = stf.Section.Split(',');
                         if (listofsection.LongLength > 0)

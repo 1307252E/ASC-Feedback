@@ -87,7 +87,7 @@ namespace _360_Staff_Survey_Web
                             {
                                 try
                                 {
-                                    DateTime autoemailtime = d2.AddDays(-7);
+                                    DateTime autoemailtime = d2.AddDays(7);
                                     bool truefalse = dbmanager.UpdateAutoEmail(autoemailtime, "N");
                                     if (truefalse == false)
                                     {
@@ -148,7 +148,7 @@ namespace _360_Staff_Survey_Web
                             {
                                 try
                                 {
-                                    DateTime autoemailtime = d2.AddDays(-7);
+                                    DateTime autoemailtime = d2.AddDays(7);
                                    bool truefalse = dbmanager.UpdateAutoEmail(autoemailtime, "N");
                                    if (truefalse == false)
                                    {
