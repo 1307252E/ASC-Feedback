@@ -429,6 +429,7 @@ namespace _360_Staff_Survey_Web
                     BindInsideGradeGrid();
                     LegendMessage();
 
+                    // if (Session["Role"].ToString().Equals("Director") || Session["Role"].ToString().Equals("Officer"))
                     if (Session["Role"].ToString().Equals("Director"))
                     {
                         foreach (GridViewRow row_ in ViewAllHistory.Rows)
@@ -497,6 +498,7 @@ namespace _360_Staff_Survey_Web
                 gv.DataSource = dt2;
                 gv.DataBind();
 
+                    // if (Session["Role"].ToString().Equals("Director") || Session["Role"].ToString().Equals("Officer"))
                     if (Session["Role"].ToString().Equals("Director"))
                     {
                         foreach (GridViewRow row_ in ViewAllHistory.Rows)
@@ -699,6 +701,7 @@ namespace _360_Staff_Survey_Web
                 ViewAllHistory.DataBind();
                 BindInsideGradeGrid();
 
+                // if (Session["Role"].ToString().Equals("Director") || Session["Role"].ToString().Equals("Officer"))
                 if (Session["Role"].ToString().Equals("Director"))
                 {
                     foreach (GridViewRow row_ in ViewAllHistory.Rows)
@@ -892,6 +895,8 @@ namespace _360_Staff_Survey_Web
                 ViewState["HistoryGrid"] = dt;
                 Session["ListofQuestion"] = listofquestion;
                 String role_ = Session["Role"].ToString();
+
+                // if (Session["Role"].ToString().Equals("Director") || Session["Role"].ToString().Equals("Officer"))
                 if (Session["Role"].ToString().Equals("Director"))
                 {
                     foreach (GridViewRow row_ in ViewAllHistory.Rows)
@@ -1090,6 +1095,8 @@ namespace _360_Staff_Survey_Web
                 String role_ = Session["Role"].ToString();
                 ViewAllHistory.DataSource = dt;
                 ViewAllHistory.DataBind();
+
+                // if (Session["Role"].ToString().Equals("Director") || Session["Role"].ToString().Equals("Officer"))
                 if (Session["Role"].ToString().Equals("Director"))
                 {
                     foreach (GridViewRow row_ in ViewAllHistory.Rows)
