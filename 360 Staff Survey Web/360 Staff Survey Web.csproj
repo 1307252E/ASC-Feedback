@@ -136,7 +136,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
-    <Content Include="fonts\FontAwesome.otf" />
+    <None Include="Properties\PublishProfiles\FeedbackSystem.pubxml" />
+    <None Include="Properties\PublishProfiles\Web Site.pubxml" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Image\tplogo.png" />
     <Content Include="Scripts\bootstrap.js" />
@@ -164,7 +165,6 @@
     <Content Include="Image\dot2.png" />
     <Content Include="Image\PDF.png" />
     <Content Include="Image\save.png" />
-    <Content Include="Image\swap.jpg" />
     <Content Include="Image\whitebg.jpg" />
     <Content Include="Image\WORD.png" />
     <Content Include="ImportExportStaffList.aspx" />

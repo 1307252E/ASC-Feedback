@@ -713,6 +713,7 @@ namespace _360_Staff_Survey_Web
                 table.Columns.Add("AverageGrading");
                 table.Columns.Add("Date");
 
+                ArrayList graphwidth = new ArrayList();
                 ArrayList listofdates = dbmanager.GetListofDatesViaSection(section);
                 string[] functionsplit = functionlist.Split(',');
 
@@ -770,6 +771,7 @@ namespace _360_Staff_Survey_Web
                         result = 0.0;
                         staffAverage = 0.0;
                         staffAverageResult = 0.0;
+                        graphwidth.Add(monthname);
                     }
                 }
                 bool display = false;
@@ -787,6 +789,8 @@ namespace _360_Staff_Survey_Web
                 }
                 if (display == true)
                 {
+                    int graphwidthx = graphwidth.Count * 100;
+
                     Chart1.Visible = true;
                     DataTableReader datareader = table.CreateDataReader();
                     Chart1.DataBindCrossTable(datareader, "FunctionGroup", "Date", "AverageGrading", "");
@@ -795,7 +799,7 @@ namespace _360_Staff_Survey_Web
                     Chart1.ChartAreas[0].AxisY.Title = "Average grade";
                     Chart1.Legends[0].Enabled = true;
                     Chart1.Legends[0].BackColor = System.Drawing.Color.Transparent;
-                    Chart1.Width = 1300;
+                    Chart1.Width = graphwidthx;
                     Chart1.Height = 600;
 
                     ArrayList listOfStDev = new ArrayList();
