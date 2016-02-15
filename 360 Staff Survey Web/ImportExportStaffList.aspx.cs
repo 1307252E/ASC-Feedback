@@ -92,7 +92,7 @@ namespace _360_Staff_Survey_Web
                             {
                                 designationstring = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(designation);
                             }
-                            string section = dr["Section"].ToString().ToUpper().Trim();
+                            string section = dr["Section"].ToString().Trim();
                             string sectionstring = "";
                             string[] secinfo = section.Split(',');
                             string[] secarray = RemoveDuplicates(secinfo);

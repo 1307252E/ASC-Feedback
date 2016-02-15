@@ -4158,7 +4158,7 @@ namespace _360_Staff_Survey_Web.Class
                 myconn.ConnectionString = connectionString;
                 myconn.Open();
                 comm.Connection = myconn;
-                comm.CommandText = "select COUNT(*) AS TOTAL from Functions where FunctionID=@func";
+                comm.CommandText = "select COUNT(*) AS TOTAL from Functions where Function=@func";
                 comm.Parameters.AddWithValue("@func", func);
 
                 SqlDataReader dr = comm.ExecuteReader();
