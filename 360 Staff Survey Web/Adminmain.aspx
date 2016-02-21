@@ -9,7 +9,7 @@
     </div>--%>
 
 
-<link rel="stylesheet" type="text/css" href="Styles/ddmenu.css">
+    <link rel="stylesheet" type="text/css" href="Styles/ddmenu.css">
     <nav id="ddmenu">
         <script src="Scripts/ddmenu.js" type="text/javascript"></script>
     <div class="menu-icon"></div>
@@ -78,24 +78,22 @@
                 <div class="dd-inner">
                     <div class="column">
                         <h3 style="font-size:medium">View Feedback Status</h3>
-                        <asp:Label ID="ViewNotCompletedLbl" runat="server" CssClass="label"></asp:Label>
+                            <asp:Label ID="ViewNotCompletedLbl" runat="server" CssClass="label"></asp:Label>
                             <asp:LinkButton ID="ViewNotCompletedLink" runat="server" CssClass="hereLink" OnClick="ViewNotCompletedLink_Click">View Non-Submission List</asp:LinkButton>
                             <asp:Label ID="ViewIndividualAllLbl" runat="server" CssClass="label"></asp:Label>
                             <asp:LinkButton ID="ViewIndividualAllLink" runat="server" CssClass="hereLink" OnClick="ViewIndividualAllLink_Click">View All/Individual Staff Report</asp:LinkButton>
                             <asp:Label ID="ViewAppraisalChart" runat="server" CssClass="label"></asp:Label>
                             <asp:LinkButton ID="ViewAppraisalChartLink" runat="server" CssClass="hereLink" OnClick="ViewAppraisalChartLink_Click">View Historical Chart</asp:LinkButton>
-                      
-          
-     
-
+                            <asp:Label ID="ViewIndividualGraphLbl" runat="server" CssClass="label"></asp:Label>
+                            <asp:LinkButton ID="ViewIndividualGraphLink" runat="server" CssClass="hereLink" OnClick="ViewIndividualGraph_Click">View Individual Staff's Graph</asp:LinkButton>  
                     </div>
 
                 </div>
             </div>
     </ul>
 </nav>
-    
-    
+
+
     <div align="center">
 
 
@@ -108,11 +106,11 @@
         <asp:Panel ID="DefaultPanel" align="left" CssClass="defaultPanel" runat="server"
             GroupingText="Peer Feedback">
             <div align="center">
-                
 
-                
-             
-         
+
+
+
+
 
                 <table>
                     <tr>
@@ -132,9 +130,9 @@
                 </table>
             </div>
         </asp:Panel>
-        
+
         <br />
-        
+
         <%--<asp:Panel ID="ManageSystem" align="left" CssClass="defaultPanel" runat="server"
             GroupingText="Manage System">
             <div align="center">
@@ -162,8 +160,8 @@
                 </table>
             </div>
         </asp:Panel>--%>
-        
-        
+
+
         <asp:Panel ID="ManageAppraisalSummary" align="left" CssClass="defaultPanel" runat="server"
             GroupingText="Manage Staff Feedback Report">
             <div align="center">
@@ -194,4 +192,5 @@
         </asp:Panel>
         <br />
     </div>
-    &nbsp;&nbsp;&nbsp;</asp:Content>
+    &nbsp;&nbsp;&nbsp;
+</asp:Content>

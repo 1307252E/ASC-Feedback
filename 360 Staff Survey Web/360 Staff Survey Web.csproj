@@ -112,6 +112,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="accessdenied.aspx" />
@@ -564,6 +565,7 @@
     <Compile Include="ForgetPassword.aspx.designer.cs">
       <DependentUpon>ForgetPassword.aspx</DependentUpon>
     </Compile>
+    <Compile Include="ImagePositioningEMU.cs" />
     <Compile Include="ImportExportStaffList.aspx.cs">
       <DependentUpon>ImportExportStaffList.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

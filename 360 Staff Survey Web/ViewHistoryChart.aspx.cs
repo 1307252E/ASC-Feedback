@@ -11,12 +11,22 @@ using System.IO;
 using System.Data;
 using System.Drawing;
 using System.Text.RegularExpressions;
-using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Drawing.Spreadsheet;
+using DocumentFormat.OpenXml.Drawing;
+using System.Xml;
+using System.Windows.Media.Imaging;
+using Xdr = DocumentFormat.OpenXml.Drawing.Spreadsheet;
+using A = DocumentFormat.OpenXml.Drawing;
+
 
 namespace _360_Staff_Survey_Web
 {
     public partial class ViewHistoryChart : System.Web.UI.Page
-    {       
+    {
         public static string lbl;
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -379,10 +389,12 @@ namespace _360_Staff_Survey_Web
         }
         protected void SearchBtn_Click(object sender, EventArgs e)
         {
-            lblSectionFunctionSelected.Visible = true;
-            lblSectionFunctionSelected.Text = "<br/>" + "Selected section: " + ddlSelectSection.Text +
-                "<br/>" + "Selected question: " + ddlSelectQuestion.Text +
-                "<br/>" + "Selected function: " + ddlFilterFunction.Text;
+            /*SelectedSect.Visible = true;
+            SelectedSect.Text = "Selected section: " + ddlSelectSection.Text;
+            SelectedQues.Visible = true;
+            SelectedQues.Text = "Selected question: " + ddlSelectQuestion.Text;
+            SelectedFunc.Visible = true;
+            SelectedFunc.Text = "Selected function: " + ddlFilterFunction.Text;*/
 
             if (SelectTbxFunction.Text == "")
             {
@@ -700,8 +712,8 @@ namespace _360_Staff_Survey_Web
         }
         protected void populateChartFunctionViaSection(string section, string functionlist, int questionID)
         {
-           // try
-           // {
+            try
+            {
                 MultiView1.Visible = true;
 
                 Chart1.Series.Clear();
@@ -789,7 +801,7 @@ namespace _360_Staff_Survey_Web
                 }
                 if (display == true)
                 {
-                    int graphwidthx = graphwidth.Count * 100;
+                    int graphwidthx = graphwidth.Count * 300;
 
                     Chart1.Visible = true;
                     DataTableReader datareader = table.CreateDataReader();
@@ -815,9 +827,9 @@ namespace _360_Staff_Survey_Web
                             listOfSDForFunction.Add(dbmanager.GetStdDevAppraisalForFunction(section, listOfFunctions[x], date, questionID));
                             listOfMedForFunction.Add(GetMedianFunctionViaSectionCount(section, listOfFunctions[x], date, questionID));
                         }
-                        listOfStDev.Add(String.Join(",",listOfSDForFunction.ToArray()));
-                        listOfMed.Add(String.Join(",",listOfMedForFunction.ToArray()));
-                    }                    
+                        listOfStDev.Add(String.Join(",", listOfSDForFunction.ToArray()));
+                        listOfMed.Add(String.Join(",", listOfMedForFunction.ToArray()));
+                    }
                     for (int i = 0; i < Chart1.Series.Count; i++)
                     {
                         for (int k = 0; k < Chart1.Series[i].Points.Count; k++)
@@ -828,6 +840,9 @@ namespace _360_Staff_Survey_Web
                         }
                     }
                     MultiView1.ActiveViewIndex = 0;
+
+                    string imgPath = HttpContext.Current.Request.PhysicalApplicationPath + "Charts/ChartImage.png";
+                    Chart1.SaveImage(imgPath);
                 }
                 else
                 {
@@ -835,12 +850,12 @@ namespace _360_Staff_Survey_Web
                     MultiView1.ActiveViewIndex = 1;
                     lbDisplay.Text = "<b>No result found</b>";
                 }
-           // }
-           /* catch (Exception e)
+            }
+            catch (Exception e)
             {
                 throw e;
                 MultiView1.Visible = false;
-            }*/
+            }
         }
         protected void populateChartSectionViaFunction(string function, string sectionlist, int questionID)
         {
@@ -1224,169 +1239,167 @@ namespace _360_Staff_Survey_Web
         {
             Response.Clear();
             Response.Buffer = true;
-            Response.AddHeader("content-disposition", "attachment;filename=ViewHistoryChart.xls");
-            Response.ContentType = "application/vnd.ms-excel";
+            Response.AddHeader("content-disposition", "attachment;filename=ViewHistoryChart.xlsx");
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             Response.Charset = "";
             StringWriter sw = new StringWriter();
             HtmlTextWriter hw = new HtmlTextWriter(sw);
             Chart1.RenderControl(hw);
 
-            string tmpChartName = "ChartImage.jpg";
-            string imgPath = HttpContext.Current.Request.PhysicalApplicationPath + tmpChartName;
-            Chart1.SaveImage(imgPath);
+            using (MemoryStream stream = new MemoryStream())
+            {
+                using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Create(stream, SpreadsheetDocumentType.Workbook))
+                {
+                    var fileName = HttpContext.Current.Request.PhysicalApplicationPath + @"\Charts\ChartImage.png";
 
-            string src = tmpChartName;
-            string img = string.Format("<img src = '{0}{1}' />", HttpContext.Current.Request.PhysicalApplicationPath, src);
+                    WorkbookPart wbp = spreadsheetDocument.AddWorkbookPart();
+                    WorksheetPart wsp = wbp.AddNewPart<WorksheetPart>();
+                    Workbook wb = new Workbook();
+                    FileVersion fv = new FileVersion();
+                    fv.ApplicationName = "Microsoft Office Excel";
+                    Worksheet ws = new Worksheet();
+                    SheetData sd = new SheetData();
 
-            Table table = new Table();
-            TableRow row = new TableRow();
-            Unit width = new Unit(500, UnitType.Pixel);
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Width = width;
-            row.Cells[0].Controls.Add(new Label { Text = ChartTitle.Text,  ForeColor=Color.Red, });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = lblSectionFunctionSelected.Text });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = img });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row = new TableRow();
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = "" });
-            table.Rows.Add(row);
-            row.Cells.Add(new TableCell());
-            row.Cells[0].Controls.Add(new Literal { Text = lbllegendHistory.Text });
-            table.Rows.Add(row);
+                    // add contents
+                    List<string> values = new List<string>();
 
-            sw = new StringWriter();
-            hw = new HtmlTextWriter(sw);
-            table.RenderControl(hw);
-            Response.Write(sw.ToString());
+                    values.Add(lblSectionFunctionSelected.Text);
+
+                    uint i = 1;
+                    foreach (var value in values)
+                    {
+                        UInt32Value rowIndex = UInt32Value.FromUInt32(i);
+                        var row = new Row { RowIndex = rowIndex }; // add a row at the top of spreadsheet
+                        sd.Append(row);
+
+                        var cell = new Cell
+                        {
+                            CellValue = new CellValue(value),
+                            DataType = new EnumValue<CellValues>(CellValues.String)
+                        };
+                        row.InsertAt(cell, 0);
+                        i++;
+                    }
+                    // add image
+                    DrawingsPart dp = wsp.AddNewPart<DrawingsPart>();
+                    ImagePart imgp = dp.AddImagePart(ImagePartType.Png, wsp.GetIdOfPart(dp));
+                    using (FileStream fs = new FileStream(fileName, FileMode.Open))
+                    {
+                        imgp.FeedData(fs);
+                    }
+                    DocumentFormat.OpenXml.Drawing.Spreadsheet.NonVisualDrawingProperties nvdp = new DocumentFormat.OpenXml.Drawing.Spreadsheet.NonVisualDrawingProperties();
+                    nvdp.Id = 1025;
+                    nvdp.Name = "Picture 1";
+                    nvdp.Description = "Chart";
+                    DocumentFormat.OpenXml.Drawing.PictureLocks picLocks = new DocumentFormat.OpenXml.Drawing.PictureLocks();
+                    picLocks.NoChangeAspect = true;
+                    picLocks.NoChangeArrowheads = true;
+                    DocumentFormat.OpenXml.Drawing.Spreadsheet.NonVisualPictureDrawingProperties nvpdp = new DocumentFormat.OpenXml.Drawing.Spreadsheet.NonVisualPictureDrawingProperties();
+                    nvpdp.PictureLocks = picLocks;
+                    DocumentFormat.OpenXml.Drawing.Spreadsheet.NonVisualPictureProperties nvpp = new DocumentFormat.OpenXml.Drawing.Spreadsheet.NonVisualPictureProperties();
+                    nvpp.NonVisualDrawingProperties = nvdp;
+                    nvpp.NonVisualPictureDrawingProperties = nvpdp;
+
+                    DocumentFormat.OpenXml.Drawing.Stretch stretch = new DocumentFormat.OpenXml.Drawing.Stretch();
+                    stretch.FillRectangle = new DocumentFormat.OpenXml.Drawing.FillRectangle();
+
+                    DocumentFormat.OpenXml.Drawing.Spreadsheet.BlipFill blipFill = new DocumentFormat.OpenXml.Drawing.Spreadsheet.BlipFill();
+                    DocumentFormat.OpenXml.Drawing.Blip blip = new DocumentFormat.OpenXml.Drawing.Blip();
+                    blip.Embed = dp.GetIdOfPart(imgp);
+                    blip.CompressionState = DocumentFormat.OpenXml.Drawing.BlipCompressionValues.Print;
+                    blipFill.Blip = blip;
+                    blipFill.SourceRectangle = new DocumentFormat.OpenXml.Drawing.SourceRectangle();
+                    blipFill.Append(stretch);
+
+                    DocumentFormat.OpenXml.Drawing.Transform2D t2d = new DocumentFormat.OpenXml.Drawing.Transform2D();
+                    DocumentFormat.OpenXml.Drawing.Offset offset = new DocumentFormat.OpenXml.Drawing.Offset();
+                    offset.X = 0;
+                    offset.Y = 0;
+                    t2d.Offset = offset;
+                    Bitmap bm = new Bitmap(fileName);
+                    //http://en.wikipedia.org/wiki/English_Metric_Unit#DrawingML
+                    //http://stackoverflow.com/questions/1341930/pixel-to-centimeter
+                    //http://stackoverflow.com/questions/139655/how-to-convert-pixels-to-points-px-to-pt-in-net-c
+                    DocumentFormat.OpenXml.Drawing.Extents extents = new DocumentFormat.OpenXml.Drawing.Extents();
+                    extents.Cx = (long)bm.Width * (long)((float)914400 / bm.HorizontalResolution);
+                    extents.Cy = (long)bm.Height * (long)((float)914400 / bm.VerticalResolution);
+                    bm.Dispose();
+                    t2d.Extents = extents;
+                    DocumentFormat.OpenXml.Drawing.Spreadsheet.ShapeProperties sp = new DocumentFormat.OpenXml.Drawing.Spreadsheet.ShapeProperties();
+                    sp.BlackWhiteMode = DocumentFormat.OpenXml.Drawing.BlackWhiteModeValues.Auto;
+                    sp.Transform2D = t2d;
+                    DocumentFormat.OpenXml.Drawing.PresetGeometry prstGeom = new DocumentFormat.OpenXml.Drawing.PresetGeometry();
+                    prstGeom.Preset = DocumentFormat.OpenXml.Drawing.ShapeTypeValues.Rectangle;
+                    prstGeom.AdjustValueList = new DocumentFormat.OpenXml.Drawing.AdjustValueList();
+                    sp.Append(prstGeom);
+                    sp.Append(new DocumentFormat.OpenXml.Drawing.NoFill());
+
+                    DocumentFormat.OpenXml.Drawing.Spreadsheet.Picture picture = new DocumentFormat.OpenXml.Drawing.Spreadsheet.Picture();
+                    picture.NonVisualPictureProperties = nvpp;
+                    picture.BlipFill = blipFill;
+                    picture.ShapeProperties = sp;
+
+                    DocumentFormat.OpenXml.Drawing.Spreadsheet.Position pos = new DocumentFormat.OpenXml.Drawing.Spreadsheet.Position();
+                    pos.X = 0;
+                    pos.Y = 10;
+                    Extent ext = new Extent();
+                    ext.Cx = extents.Cx;
+                    ext.Cy = extents.Cy;
+                    AbsoluteAnchor anchor = new AbsoluteAnchor();
+                    anchor.Position = pos;
+                    anchor.Extent = ext;
+                    anchor.Append(picture);
+                    anchor.Append(new ClientData());
+                    WorksheetDrawing wsd = new WorksheetDrawing();
+                    wsd.Append(anchor);
+                    Drawing drawing = new Drawing();
+                    drawing.Id = dp.GetIdOfPart(imgp);
+
+                    wsd.Save(dp);
+
+                    ws.Append(sd);
+                    ws.Append(drawing);
+                    wsp.Worksheet = ws;
+                    wsp.Worksheet.Save();
+                    Sheets sheets = new Sheets();
+                    Sheet sheet = new Sheet();
+                    sheet.Name = "history chart";
+                    sheet.SheetId = 1;
+                    sheet.Id = wbp.GetIdOfPart(wsp);
+                    sheets.Append(sheet);
+                    wb.Append(fv);
+                    wb.Append(sheets);
+
+                    spreadsheetDocument.WorkbookPart.Workbook = wb;
+                    spreadsheetDocument.WorkbookPart.Workbook.Save();
+                    spreadsheetDocument.Close();
+                }
+                File.WriteAllBytes(HttpContext.Current.Request.PhysicalApplicationPath + @"\Charts\temp.xlsx", stream.ToArray());
+            }
+            Response.WriteFile(HttpContext.Current.Request.PhysicalApplicationPath + @"\Charts\temp.xlsx");
             Response.Flush();
+            Response.Close();
             Response.End();
+        }
+        // Given a worksheet, a column name, and a row index, 
+        // gets the cell at the specified column and 
+        private static Cell GetCell(Worksheet worksheet,
+                  string columnName, uint rowIndex)
+        {
+            Row row = GetRow(worksheet, rowIndex);
+
+            if (row == null)
+                return null;
+
+            return row.Elements<Cell>().Where(c => string.Compare
+                   (c.CellReference.Value, columnName +
+                   rowIndex, true) == 0).First();
+        }
+        // Given a worksheet and a row index, return the row.
+        private static Row GetRow(Worksheet worksheet, uint rowIndex)
+        {
+            return worksheet.GetFirstChild<SheetData>().
+              Elements<Row>().Where(r => r.RowIndex == rowIndex).First();
         }
     }
 }

@@ -66,12 +66,16 @@ namespace _360_Staff_Survey_Web
             {
                 AppraisalDisplayDetailsLink.Style.Add("color", "Purple");
             }
+            if (Session["ViewIndividualGraphLink"] != null)
+            {
+                ViewIndividualGraphLink.Style.Add("color", "Purple");
+            }
             #endregion
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+
             if (!Page.IsPostBack)
             {
                 if (Session["Role"] != null)
@@ -101,33 +105,37 @@ namespace _360_Staff_Survey_Web
 
                             if (st.Startdate > today)
                             {
-                                SubmitAppraisalLbl.Text = "System period <b>is closed<b>";
+                                SubmitAppraisalLbl.Text = "Feedback period is <b>closed<b>";
                                 SubmitLink.Visible = false;
+                                ViewAppraisalLbl.Text = "To view your own feedback report, click ";
+                                ViewAppraisalLink.Visible = true;
                             }
                             else if (zzp <= (-1))
                             {
-                                SubmitAppraisalLbl.Text = "System period <b>is closed<b>";
+                                SubmitAppraisalLbl.Text = "Feedback period is <b>closed<b>";
                                 SubmitLink.Visible = false;
+                                ViewAppraisalLbl.Text = "To view your own feedback report, click ";
+                                ViewAppraisalLink.Visible = true;
                             }
                             else if (result == true)
                             {
                                 Session["Submitted"] = true;
                                 SubmitAppraisalLbl.Text = "Your feedback has been <b>submitted<b>";
                                 SubmitLink.Visible = false;
+                                ViewAppraisalLink.Visible = false;
                             }
                             else
                             {
                                 Session["Submitted"] = null;
                                 SubmitAppraisalLbl.Text = "To start peer feedback, click ";
                                 SubmitLink.Visible = true;
+                                ViewAppraisalLink.Visible = false;
                             }
                         }
                         else
                         {
                             SubmitLink.Visible = false;
                         }
-
-                        
 
                         bool countallappraisal = dbmanager.CountAllAppraisal();
                         if (countallappraisal == true)
@@ -158,23 +166,6 @@ namespace _360_Staff_Survey_Web
                         }
                         //ManageQuestionPanel.Visible = true;
                         ManageQuestionLink.Visible = true;
-            
-                        int countapp = dbmanager.GetCountYourAppraisal(uid);
-
-                        if (countapp != 0)
-                        {
-                            //if appraisal submitted
-                            //ViewAppraisalLbl.Text = "To view own evaluation report, click ";
-                            ViewAppraisalLbl.Text = "To view own feedback report, click ";
-                            ViewAppraisalLink.Visible = true;
-                        }
-                        else
-                        {
-                            ViewAppraisalLbl.Text = "You have 0 feedback(s) <b>received<b>";
-                            ViewAppraisalLink.Visible = false;
-
-                        }
-
 
                         bool checkifappraisalsec = dbmanager.CountAllAppraisal();
                         if (checkifappraisalsec == true)
@@ -333,9 +324,14 @@ namespace _360_Staff_Survey_Web
         protected void UpdateStaffLink_Click(object sender, EventArgs e)
         {
             UpdateStaffDept.Style.Add("color", "Purple");
-            
-            Response.Redirect("~/ChangeStaffDept.aspx");
 
+            Response.Redirect("~/ChangeStaffDept.aspx");
+        }
+        protected void ViewIndividualGraph_Click(object sender, EventArgs e)
+        {
+            ViewIndividualGraphLink.Style.Add("color", "Purple");
+            Session["ViewIndividualGraphLink"] = true;
+            Response.Redirect("~/GraphReports.aspx");
         }
     }
 }

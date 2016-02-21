@@ -193,6 +193,24 @@ namespace _360_Staff_Survey_Web {
         protected global::System.Web.UI.WebControls.LinkButton ViewAppraisalChartLink;
         
         /// <summary>
+        /// ViewIndividualGraphLbl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ViewIndividualGraphLbl;
+        
+        /// <summary>
+        /// ViewIndividualGraphLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton ViewIndividualGraphLink;
+        
+        /// <summary>
         /// DefaultPanel control.
         /// </summary>
         /// <remarks>
