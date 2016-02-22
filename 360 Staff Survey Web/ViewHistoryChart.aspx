@@ -150,7 +150,11 @@
                             <asp:Label ID="ChartTitle" Text="Peer Evaluation Chart" Font-Names="Microsoft Sans Serif" runat="server" Font-Underline="True" Font-Bold="True"></asp:Label>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <br />
-                            <asp:Label ID="lblSectionFunctionSelected" runat="server" Font-Names="Microsoft Sans Serif" Visible="False"></asp:Label>
+                            <asp:Label ID="SelectedSect" runat="server" Font-Names="Microsoft Sans Serif" Visible="False"></asp:Label>
+                            <br />
+                            <asp:Label ID="SelectedQues" runat="server" Font-Names="Microsoft Sans Serif" Visible="False"></asp:Label>
+                            <br />
+                            <asp:Label ID="SelectedFunc" runat="server" Font-Names="Microsoft Sans Serif" Visible="False"></asp:Label>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </td>
                     </tr>
