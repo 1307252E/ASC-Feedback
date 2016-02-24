@@ -52,31 +52,6 @@ namespace _360_Staff_Survey_Web
                         Session["HomeClicked"] = true;
                         string uid = Session["UserID"].ToString();
                         string username = Session["Name"].ToString();
-             
-
-                            /**if (role == "Officer")
-                            {
-                                ArrayList listofsec1 = new ArrayList();
-                                bool checkifappraisalsec1 = false;
-                                ManageAppraisalPanel.Visible = true;
-                                staffinfo stfinfo1 = dbmanager.GetStaffDetailsViaUid(uid);
-                                if (stfinfo1.Section != "ALL")
-                                {
-                                    string[] arraysec = stfinfo1.Section.Split(',');
-                                    foreach (string sec in arraysec)
-                                    {
-                                        if (sec != "")
-                                        {
-                                            listofsec1.Add(sec);
-                                        }
-                                    }
-                                    checkifappraisalsec1 = dbmanager.CheckIfExistSection(listofsec1);
-                                }
-                                else
-                                {
-                                    checkifappraisalsec1 = dbmanager.CountAllAppraisal();
-                                }**/
-                                
 
                         if (role != "User")
                         {
@@ -134,8 +109,6 @@ namespace _360_Staff_Survey_Web
                             ManageAppraisalPanel.Visible = false;
                         }
 
-
-
                         //staffName.Text = username;
                         //if appriasal submitted
                         bool result = dbmanager.CheckIfAppraisalSubmitted(uid);
@@ -150,47 +123,36 @@ namespace _360_Staff_Survey_Web
 
                             if (st.Startdate > today)
                             {
-                                SubmitAppraisalLbl.Text = "System period <b>is closed<b>";
+                                SubmitAppraisalLbl.Text = "Feedback period is <b>closed<b>";
                                 SubmitLink.Visible = false;
+                                ViewAppraisalLbl.Text = "To view own feedback report, click ";
+                                ViewAppraisalLink.Visible = true;
                             }
                             else if (zzp <= (-1))
                             {
-                                SubmitAppraisalLbl.Text = "System period <b>is closed<b>";
+                                SubmitAppraisalLbl.Text = "Feedback period is <b>closed<b>";
                                 SubmitLink.Visible = false;
+                                ViewAppraisalLbl.Text = "To view own feedback report, click ";
+                                ViewAppraisalLink.Visible = true;
                             }
                             else if (result == true)
                             {
                                 Session["Submitted"] = true;
                                 SubmitAppraisalLbl.Text = "Your feedback has been <b>submitted<b>";
                                 SubmitLink.Visible = false;
+                                ViewAppraisalLink.Visible = false;
                             }
                             else
                             {
                                 Session["Submitted"] = null;
                                 SubmitAppraisalLbl.Text = "To start peer feedback, click ";
                                 SubmitLink.Visible = true;
-                                
+                                ViewAppraisalLink.Visible = false;
                             }
                         }
                         else
                         {
                             SubmitLink.Visible = false;
-                        }
-
-                        int countapp = dbmanager.GetCountYourAppraisal(uid);
-
-                        if (countapp != 0)
-                        {
-                            //if appraisal submitted
-                            //ViewAppraisalLbl.Text = "To view own evaluation report, click ";
-                            ViewAppraisalLbl.Text = "To view own feedback report, click ";
-                            ViewAppraisalLink.Visible = true;
-                        }
-                        else
-                        {
-                            ViewAppraisalLbl.Text = "You have 0 feedback(s) <b>received<b>";
-                            ViewAppraisalLink.Visible = false;
-
                         }
                     }
                 }
@@ -199,14 +161,9 @@ namespace _360_Staff_Survey_Web
                     Response.Redirect("accessdenied.aspx");
                 }
                 //ViewAppraisalLbl.Visible = false;
-                //ViewAppraisalLink.Visible = false;
-            
-                
+                //ViewAppraisalLink.Visible = false;                            
             }
-        }
-        
-
-
+        }       
         protected void SubmitAppraisalLink_Click(object sender, EventArgs e)
         {
             SubmitLink.Style.Add("color", "Purple");

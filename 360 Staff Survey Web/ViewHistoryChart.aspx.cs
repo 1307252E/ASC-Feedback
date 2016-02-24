@@ -389,12 +389,12 @@ namespace _360_Staff_Survey_Web
         }
         protected void SearchBtn_Click(object sender, EventArgs e)
         {
-            /*SelectedSect.Visible = true;
+            SelectedSect.Visible = true;
             SelectedSect.Text = "Selected section: " + ddlSelectSection.Text;
             SelectedQues.Visible = true;
             SelectedQues.Text = "Selected question: " + ddlSelectQuestion.Text;
             SelectedFunc.Visible = true;
-            SelectedFunc.Text = "Selected function: " + ddlFilterFunction.Text;*/
+            SelectedFunc.Text = "Selected function: " + ddlFilterFunction.Text;
 
             if (SelectTbxFunction.Text == "")
             {
@@ -1263,7 +1263,7 @@ namespace _360_Staff_Survey_Web
                     // add contents
                     List<string> values = new List<string>();
 
-                    values.Add(lblSectionFunctionSelected.Text);
+                    //values.Add(lblSectionFunctionSelected.Text);
 
                     uint i = 1;
                     foreach (var value in values)
